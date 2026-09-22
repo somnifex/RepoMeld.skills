@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RepoMeld Integration Result",
+  "type": "object",
+  "required": ["scope", "status", "accepted_findings", "escalations", "ownership_conflicts", "summary"],
+  "properties": {
+    "scope": {"type": "string"},
+    "status": {"type": "string", "enum": ["complete", "partial", "failed"]},
+    "accepted_findings": {"type": "array", "items": {"type": "string"}},
+    "escalations": {"type": "array", "items": {"type": "string"}},
+    "ownership_conflicts": {"type": "array", "items": {"type": "string"}},
+    "cross_scope_references": {"type": "array", "items": {"type": "string"}},
+    "summary": {"type": "string"}
+  },
+  "additionalProperties": true
+}

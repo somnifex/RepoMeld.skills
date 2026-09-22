@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RepoMeld Finding",
+  "type": "object",
+  "required": ["id", "scope", "path", "category", "action", "risk", "confidence", "rationale"],
+  "properties": {
+    "id": {"type": "string"},
+    "scope": {"type": "string"},
+    "path": {"type": "string"},
+    "line_start": {"type": ["integer", "null"], "minimum": 1},
+    "line_end": {"type": ["integer", "null"], "minimum": 1},
+    "category": {"type": "string", "enum": ["stage_marker", "agent_narration", "redundant_comment", "temporary_artifact", "stale_todo", "duplicated_rationale", "one_off_helper", "broken_reference", "other"]},
+    "action": {"type": "string", "enum": ["delete", "rewrite", "preserve", "relocate", "escalate"]},
+    "risk": {"type": "string", "enum": ["L0", "L1", "L2", "L3", "L4", "L5"]},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "rationale": {"type": "string"},
+    "proposed_change": {"type": ["string", "null"]},
+    "reference_evidence": {"type": "array", "items": {"type": "string"}},
+    "requires_review": {"type": "boolean", "default": false}
+  },
+  "additionalProperties": true
+}

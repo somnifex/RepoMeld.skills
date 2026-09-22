@@ -1,0 +1,20 @@
+interface:
+  display_name: repomeld
+  short_description: Self-orchestrating repository hygiene for software projects developed
+    with SDD, coding agents, or vibe coding. Audit and consolidate AI-development
+    traces such as S1/S2/M1/M2 stage markers, verbose process comments, temporary
+    plans/reports/scratch files, stale TODOs, duplicated rationale, and abandoned
+    agent artifacts while preserving durable engineering knowledge and observable
+    behavior. Use when the user asks to clean, consolidate, normalize, or remove AI/SDD
+    development traces from a repository. Do not use as a justification for unrelated
+    refactoring, feature work, API changes, schema changes, dependency upgrades, or
+    behavior changes.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

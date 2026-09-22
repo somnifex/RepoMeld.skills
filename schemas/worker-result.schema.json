@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RepoMeld Worker Result",
+  "type": "object",
+  "required": ["worker_role", "mode", "scope", "status", "findings", "changed_paths", "risks", "validation"],
+  "properties": {
+    "worker_role": {"type": "string"},
+    "mode": {"type": "string", "enum": ["AUDIT", "APPLY"]},
+    "scope": {"type": "string"},
+    "status": {"type": "string", "enum": ["complete", "partial", "failed"]},
+    "findings": {"type": "array", "items": {"$ref": "finding.schema.json"}},
+    "changed_paths": {"type": "array", "items": {"type": "string"}},
+    "risks": {"type": "array", "items": {"type": "string"}},
+    "validation": {"type": "array", "items": {"type": "object", "required": ["command", "status"], "properties": {"command": {"type": "string"}, "status": {"type": "string"}, "notes": {"type": "string"}}, "additionalProperties": true}},
+    "notes": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}
