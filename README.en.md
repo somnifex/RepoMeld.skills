@@ -30,7 +30,8 @@ It is not an "AI comment deleter" and not a license for unrelated refactoring �
 - Independent Verifier runs maker-checker style review in a fresh context.
 - An L0–L5 risk model keeps hygiene from turning into behavior refactoring.
 - Internal subskills load progressively to keep the main context small.
-- `scripts/repomeld_scan.py` provides an optional read-only, deterministic repository inventory.
+- `references/comment-library/` comment template library: per-language canonical comment exemplars sourced from authoritative guides (PEP 8/257, Google Style, official Go/Rust docs, etc.). Auditors **selectively load** only the files matching the languages detected by the scan (never the whole directory); comment rewrites must fill a selected template and replace the entire logical comment unit in one pass — no word-by-word minimal patches; load-bearing comments (license headers, generated-file markers, build directives, suppression directives, doctests, etc.) are never touched.
+- `scripts/repomeld_scan.py` provides an optional read-only, deterministic repository inventory; comment analysis itself is done by the model reading code, not by scripts.
 
 ## How it works
 

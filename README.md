@@ -30,7 +30,8 @@
 - Independent Verifier 使用全新上下文做 maker-checker 式检查。
 - L0–L5 风险模型阻止 hygiene 演变成行为重构。
 - 内部 subskills 渐进式加载，降低主上下文压力。
-- `scripts/repomeld_scan.py` 提供可选的只读、确定性 repository inventory。
+- `references/comment-library/` 注释案例库：按语言组织的注释范本（源自 PEP 8/257、Google Style、Go/Rust 官方文档等权威来源）。审计时**按扫描到的语言选择性加载**（绝不全量加载）；改写注释必须套用范本填空，并按"逻辑注释单元"整块全面修正，不做逐词最小修补；承重注释（许可证头、生成标记、构建指令、抑制指令、doctest 等）禁改。
+- `scripts/repomeld_scan.py` 提供可选的只读、确定性 repository inventory；注释分析本身由大模型阅读完成，不依赖脚本。
 
 ## 工作原理
 

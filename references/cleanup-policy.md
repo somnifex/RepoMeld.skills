@@ -31,7 +31,22 @@ Remove comments that merely narrate obvious code or agent steps, for example:
 - "Now iterate through every user" directly above a self-explanatory loop;
 - "Step 3" / "Phase 2" / "M1" labels with no durable meaning;
 - "As discussed above" / "we now need to" process narration;
-- explanations that only restate the next line of code.
+- explanations that only restate the next line of code;
+- tutorial-style docstrings that add nothing beyond the signature ("This function takes two numbers and adds them together and returns the result.");
+- journal/attribution comments ("Modified by John 2023-05-01") — version control history carries this;
+- commented-out code (including commented-out blocks in HTML/CSS/SQL), unless it is load-bearing (see the comment-library load-bearing lists).
+
+## Comment template library
+
+When rewriting or adding comments, do not let the model invent a style. Select a template:
+
+1. Load `references/comment-library/INDEX.md`.
+2. Load only the library files matching the languages present in the shard (per the INDEX loading table); never the whole directory.
+3. Choose a template from the matching language file, fill its slots from the code's actual behavior, and rewrite the entire logical comment unit in one pass.
+
+Minimal word-level patching is forbidden: partial rewrites leave mixed styles and broken context inside one comment block. Each rewrite produces the complete final text of the unit at once, and rewriting must not touch code lines.
+
+Repo conventions override library defaults: if the shard already uses one consistent style (e.g. NumPy-style docstrings, kernel-style C comments), keep it; style differences alone are never findings. Load-bearing comments (license/SPDX headers, generated-file markers, build/compiler directives, suppression directives, doctests, magic comments) are preserved unchanged and handled via escalation when suspect.
 
 ## Preserve candidates
 

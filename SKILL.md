@@ -1,6 +1,6 @@
 ---
 name: repomeld
-description: Self-orchestrating repository hygiene for software projects developed with SDD, coding agents, or vibe coding. Audit and consolidate AI-development traces such as S1/S2/M1/M2 stage markers, verbose process comments, temporary plans/reports/scratch files, stale TODOs, duplicated rationale, and abandoned agent artifacts while preserving durable engineering knowledge and observable behavior. Use when the user asks to clean, consolidate, normalize, or remove AI/SDD development traces from a repository. Do not use as a justification for unrelated refactoring, feature work, API changes, schema changes, dependency upgrades, or behavior changes.
+description: Self-orchestrating repository hygiene for software projects developed with SDD, coding agents, or vibe coding. Audit and consolidate AI-development traces such as S1/S2/M1/M2 stage markers, verbose process comments, temporary plans/reports/scratch files, stale TODOs, duplicated rationale, and abandoned agent artifacts; normalize comments against per-language template exemplars loaded selectively by scan results; preserve durable engineering knowledge and observable behavior. Use when the user asks to clean, consolidate, normalize, organize, or remove AI/SDD development traces or messy comments from a repository. Do not use as a justification for unrelated refactoring, feature work, API changes, schema changes, dependency upgrades, or behavior changes.
 ---
 
 # RepoMeld
@@ -134,6 +134,10 @@ Load `references/subskills/03-audit.md`, `references/cleanup-policy.md`, `refere
 
 Audit is strictly read-only.
 
+When a shard contains comments or docs, each audit worker additionally loads `references/comment-library/INDEX.md`, then loads only the library files matching the languages actually detected inside its own shard (normally one to three files, per the INDEX loading table). Never load the whole comment-library directory. Template selection follows `references/comment-library/selection-guide.md`; rewrite candidates must name the template they would apply.
+
+Comment scanning is performed by reading code with model file tools, not by scripts. `scripts/repomeld_scan.py` remains an optional aid; its comment-related output is candidate leads only, never decision authority, and RepoMeld stays fully functional without it.
+
 When delegation is useful, create independent audit workers from `prompts/worker.md`. Give each worker only:
 
 - global policies;
@@ -179,6 +183,8 @@ Every planned action must include:
 - reference/dependency evidence for deletions;
 - designated write owner;
 - required verification.
+
+Comment rewrites are planned as whole-comment-unit transformations, never minimal word-level patches: for each rewrite, the plan references the selected template from `references/comment-library/` and the complete target text of the logical comment block (all lines of the unit in one pass), so mixed half-old half-new blocks never enter the codebase.
 
 For a minimal concrete example of worker results, plan actions, and verification results, see `references/worked-example.md`.
 

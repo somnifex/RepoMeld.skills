@@ -14,6 +14,7 @@ RULES:
 RETURN:
 - scope summary;
 - important paths/components;
+- languages present (used for selective loading of `references/comment-library/` — list every language with source files);
 - dependencies/ownership boundaries;
 - candidate residue patterns;
 - validation commands;
