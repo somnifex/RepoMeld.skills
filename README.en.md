@@ -123,6 +123,7 @@ Practical tips:
 
 - Run on a clean worktree (or a dedicated branch) so the final diff is easy to review;
 - For large cleanups, run an audit-only pass first and confirm the cleanup plan looks right;
+- Approved L3+ escalation items can be processed incrementally afterwards: Apply → Verify only the approved items, no full re-run;
 - RepoMeld is a prompt protocol — results depend on the host model's capability; the report always distinguishes verified facts from unverified assumptions.
 
 ## Installation
@@ -161,6 +162,7 @@ repomeld/
 │   ├── partitioning-policy.md
 │   ├── risk-policy.md
 │   ├── verification-policy.md
+│   ├── worked-example.md        # Minimal end-to-end example (contract shapes)
 │   └── subskills/               # Sub-workflows for INIT → REPORT
 ├── prompts/                     # Subagent role prompts
 │   ├── explorer.md

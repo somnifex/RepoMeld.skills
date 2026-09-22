@@ -1,5 +1,7 @@
 # Risk Policy
 
+This file is the authoritative definition of the L0-L5 levels and their default permissions. SKILL.md carries only a summary and must not diverge from it.
+
 ## L0 — Process metadata only
 
 Examples: stage labels, agent narration, obsolete status metadata.

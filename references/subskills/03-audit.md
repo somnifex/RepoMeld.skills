@@ -16,4 +16,6 @@ Search for:
 
 Classify each finding as `delete`, `rewrite`, `preserve`, `relocate`, or `escalate` and assign risk.
 
+Skip text that already reads as durable rationale with no process metadata; it is not a finding (convergence check).
+
 Do not modify files.

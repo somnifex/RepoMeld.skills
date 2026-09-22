@@ -18,3 +18,5 @@ RETURN:
 - candidate residue patterns;
 - validation commands;
 - uncertainties.
+
+A minimal repository-map excerpt is in `references/worked-example.md`.

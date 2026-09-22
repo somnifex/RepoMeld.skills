@@ -123,6 +123,7 @@ VERIFY(changes)
 
 - 先在干净的工作树（或专用分支）上运行，便于 review 最终 diff；
 - 大范围清理前可先跑一次 audit-only，确认 cleanup plan 符合预期；
+- 报告中的 L3+ escalation 项批准后可增量处理：只对批准项走 Apply → Verify，无需全量重跑；
 - RepoMeld 是提示词协议，实际效果取决于宿主模型的能力；报告中会明确区分"已验证事实"与"未验证假设"。
 
 ## 安装
@@ -161,6 +162,7 @@ repomeld/
 │   ├── partitioning-policy.md
 │   ├── risk-policy.md
 │   ├── verification-policy.md
+│   ├── worked-example.md        # 端到端最小示例（契约形态参考）
 │   └── subskills/               # INIT → REPORT 各阶段子流程
 ├── prompts/                     # 子代理角色提示词
 │   ├── explorer.md

@@ -7,20 +7,23 @@ SCOPE: <assigned semantic shard>
 MODE: <AUDIT | APPLY>
 
 OBJECTIVE:
-Perform RepoMeld work only within the assigned shard according to the global policies and current frozen cleanup plan.
+Perform RepoMeld work only within the assigned shard according to global policies and, for APPLY, the frozen cleanup plan.
 
-AUDIT RULES:
-- Read only.
-- Inspect all RepoMeld concerns within this shard.
-- Return structured findings; do not mutate.
+READ:
+- The entire assigned shard.
+- Directly relevant dependency files and manifests outside the shard, read-only.
 
-APPLY RULES:
-- Modify only files explicitly owned by this shard.
-- Execute only accepted cleanup-plan actions.
-- Do not change runtime behavior.
-- Do not make unrelated refactors or opportunistic improvements.
-- Preserve pre-existing unrelated user changes.
-- Run relevant local validation.
+WRITE:
+- AUDIT: nothing. Audit is strictly read-only.
+- APPLY: only files explicitly owned by this shard in the frozen cleanup plan.
+
+DO NOT:
+- Change runtime behavior.
+- Refactor, restyle, or improve anything unrelated to accepted plan actions.
+- Touch pre-existing unrelated user changes.
+- Delete uncertain artifacts; escalate instead.
+- Modify files outside the assigned ownership.
 
 OUTPUT:
 Return a result compatible with `schemas/worker-result.schema.json`.
+A minimal example is in `references/worked-example.md`.

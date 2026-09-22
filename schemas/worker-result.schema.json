@@ -1,5 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://repomeld.dev/schemas/worker-result.schema.json",
   "title": "RepoMeld Worker Result",
   "type": "object",
   "required": ["worker_role", "mode", "scope", "status", "findings", "changed_paths", "risks", "validation"],

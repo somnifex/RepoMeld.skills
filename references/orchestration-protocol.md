@@ -93,9 +93,13 @@ Cross-scope changes must be returned to the coordinator for reassignment or esca
 
 No mutation until required audit work and reduction have completed and a cleanup plan exists.
 
+Record a coverage snapshot: shards audited, shards explicitly excluded with reasons, and findings deferred as escalations.
+
 ### Apply barrier
 
 No repository-level verification until required mutation and integration work has completed.
+
+Record per-shard action outcomes (applied / skipped / failed) together with the frozen final diff.
 
 ## Independent verification
 
@@ -112,4 +116,4 @@ If a delegated task fails:
 - do not silently omit the scope;
 - report incomplete coverage.
 
-If subagents are unavailable, simulate the same phases sequentially in the primary context.
+If subagents are unavailable, simulate the same phases sequentially in the primary context, preserving barrier semantics and applying the degraded verification rules in `references/verification-policy.md`.

@@ -39,3 +39,12 @@ Never report pre-existing user changes as RepoMeld changes.
 Only state "no behavior change observed" when both diff review and relevant validation support it.
 
 If validation could not run, state the gap explicitly.
+
+## Degraded verification
+
+When no independent context exists (PRIMARY_ONLY mode):
+
+- re-read the final diff from disk, not from memory;
+- challenge each change adversarially;
+- always record "verification performed by the author in the same context" in gaps;
+- use only confidence language that this supports.

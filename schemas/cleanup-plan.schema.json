@@ -1,14 +1,40 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://repomeld.dev/schemas/cleanup-plan.schema.json",
   "title": "RepoMeld Cleanup Plan",
   "type": "object",
-  "required": ["repository_root", "baseline", "shards", "actions", "escalations"],
+  "required": ["repository_root", "baseline", "protected_paths", "shards", "actions", "escalations"],
   "properties": {
     "repository_root": {"type": "string"},
-    "baseline": {"type": "object"},
+    "baseline": {"type": "object", "description": "VCS baseline captured in INIT: branch, commit, status/diff summary."},
+    "protected_paths": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Paths modified before RepoMeld started or otherwise protected. Mutation workers must never touch them."
+    },
     "execution_mode": {"type": "string", "enum": ["PARALLEL_NATIVE", "SEQUENTIAL_NATIVE", "PRIMARY_ONLY"]},
     "shards": {"type": "array", "items": {"type": "object", "required": ["id", "owned_paths"], "properties": {"id": {"type": "string"}, "owned_paths": {"type": "array", "items": {"type": "string"}}, "read_dependencies": {"type": "array", "items": {"type": "string"}}}, "additionalProperties": true}},
-    "actions": {"type": "array", "items": {"type": "object", "required": ["id", "path", "action", "risk", "owner", "reason"], "properties": {"id": {"type": "string"}, "path": {"type": "string"}, "action": {"type": "string"}, "risk": {"type": "string"}, "owner": {"type": "string"}, "reason": {"type": "string"}, "verification": {"type": "array", "items": {"type": "string"}}}, "additionalProperties": true}},
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "path", "category", "action", "risk", "owner", "reason"],
+        "properties": {
+          "id": {"type": "string"},
+          "path": {"type": "string"},
+          "category": {"type": "string", "description": "Finding category, using the finding.schema.json vocabulary."},
+          "action": {"type": "string", "enum": ["delete", "rewrite", "relocate", "update_references"], "description": "Preserved knowledge is not an action; escalations live in the escalations array."},
+          "risk": {"type": "string", "enum": ["L0", "L1", "L2", "L3", "L4", "L5"]},
+          "owner": {"type": "string", "description": "Write owner; must be the id of a shard in shards[]."},
+          "reason": {"type": "string"},
+          "proposed_change": {"type": ["string", "null"], "description": "Intended replacement text or transformation summary for rewrite actions."},
+          "preservation_rationale": {"type": ["string", "null"], "description": "Required when this action retains or moves durable engineering knowledge."},
+          "reference_evidence": {"type": "array", "items": {"type": "string"}, "description": "Required for delete and relocate actions."},
+          "verification": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": true
+      }
+    },
     "escalations": {"type": "array", "items": {"type": "string"}}
   },
   "additionalProperties": true

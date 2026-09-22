@@ -74,6 +74,8 @@ Run these phases in order unless the user narrows scope:
 
 `AUDIT_FANOUT` and `APPLY_FANOUT` may execute independent shards concurrently. Reduction may be hierarchical. Barriers are global synchronization points and cannot be bypassed.
 
+After REPORT, approved escalations may re-enter through the Escalation resume protocol without replaying earlier phases.
+
 Any ambiguous deletion, behavior-sensitive change, ownership conflict, unexplained runtime diff, API/schema/config semantic change, or unexplained validation regression goes to `ESCALATE`, not auto-apply.
 
 ## INIT
@@ -99,7 +101,7 @@ Produce a compact repository map containing:
 - ignored/generated paths;
 - pre-existing modified files to protect.
 
-If shell execution is available, `scripts/repomeld_scan.py` may be used as a deterministic read-only aid. Its findings are candidates, never deletion authority.
+If shell execution is available, `scripts/repomeld_scan.py` may be used as a deterministic read-only aid. Its findings are candidates, never deletion authority. RepoMeld must remain fully functional without the script; native inspection always suffices.
 
 ## PARTITION
 
@@ -178,11 +180,15 @@ Every planned action must include:
 - designated write owner;
 - required verification.
 
+For a minimal concrete example of worker results, plan actions, and verification results, see `references/worked-example.md`.
+
 ## AUDIT_BARRIER
 
 Do not begin mutation until all required audit groups are complete or explicitly excluded.
 
 Freeze the cleanup plan for the apply epoch. New low-risk observations may be recorded, but do not silently expand scope into risky or cross-owned changes.
+
+Record a structured coverage snapshot at this barrier: shards audited, shards explicitly excluded with reasons, and findings deferred as escalations.
 
 ## APPLY_FANOUT
 
@@ -190,7 +196,7 @@ Load `references/subskills/05-apply.md`.
 
 Assign exclusive write ownership by shard. Prefer reusing the same semantic shard topology, but mutation workers receive only accepted plan actions.
 
-Default permissions by risk:
+Default permissions by risk (summary only; `references/risk-policy.md` is the authoritative definition and must not diverge from it):
 
 - L0 metadata/process-only: auto-apply.
 - L1 comment/documentation normalization: auto-apply.
@@ -225,11 +231,15 @@ All apply workers/integrators must finish before repository-level verification.
 
 Capture the final diff against the original baseline before verification.
 
+At this barrier, record per-shard action outcomes (applied / skipped / failed) together with the frozen final diff.
+
 ## VERIFY
 
 Load `references/subskills/06-verify.md` and `references/verification-policy.md`.
 
 Whenever subagents are available, use a fresh independent verifier from `prompts/verifier.md`. The verifier must not assume worker conclusions are correct.
+
+If only `PRIMARY_ONLY` mode is available, verification cannot be context-independent. Re-read the final diff from disk rather than from memory, challenge each change adversarially, and always record "verification performed by the author in the same context" as a verification gap. Do not use confidence language stronger than this supports.
 
 Verify as applicable:
 
@@ -252,6 +262,7 @@ Report:
 
 - execution mode and topology actually used;
 - scopes/shards processed;
+- barrier coverage snapshots (shards audited; shards explicitly excluded with reasons);
 - files modified/deleted/moved;
 - stage markers and agent narration removed;
 - comments/docs normalized;
@@ -262,6 +273,19 @@ Report:
 - verification gaps, if any.
 
 Never claim "no behavior change" when verification was incomplete.
+
+## Escalation resume
+
+Escalated items end the run; they never require a full re-run.
+
+When the user later approves one or more escalated items:
+
+1. Build a delta cleanup plan containing only the approved items, compatible with `schemas/cleanup-plan.schema.json`.
+2. Reuse the existing shard topology where possible and give each item a write owner.
+3. Apply the same barrier semantics within the delta epoch: no mutation before the delta plan is frozen; no verification before all delta mutations finish.
+4. Verify only the affected scopes, then issue a short report addendum with updated verification status.
+
+Items the user rejects are recorded as rejected with the reason. Do not re-audit the whole repository to process a resume.
 
 ## Completion criteria
 

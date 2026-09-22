@@ -1,12 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://repomeld.dev/schemas/integration-result.schema.json",
   "title": "RepoMeld Integration Result",
   "type": "object",
   "required": ["scope", "status", "accepted_findings", "escalations", "ownership_conflicts", "summary"],
   "properties": {
     "scope": {"type": "string"},
     "status": {"type": "string", "enum": ["complete", "partial", "failed"]},
-    "accepted_findings": {"type": "array", "items": {"type": "string"}},
+    "accepted_findings": {"type": "array", "items": {"type": "string"}, "description": "Ids of worker findings accepted into the cleanup plan."},
     "escalations": {"type": "array", "items": {"type": "string"}},
     "ownership_conflicts": {"type": "array", "items": {"type": "string"}},
     "cross_scope_references": {"type": "array", "items": {"type": "string"}},

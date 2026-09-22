@@ -22,3 +22,4 @@ Do not silently broaden scope.
 
 RETURN:
 A compact integration result compatible with `schemas/integration-result.schema.json`.
+A minimal example is in `references/worked-example.md`.

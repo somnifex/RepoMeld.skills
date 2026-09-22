@@ -1,5 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://repomeld.dev/schemas/finding.schema.json",
   "title": "RepoMeld Finding",
   "type": "object",
   "required": ["id", "scope", "path", "category", "action", "risk", "confidence", "rationale"],

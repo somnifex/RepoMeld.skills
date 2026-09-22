@@ -56,3 +56,11 @@ Classify as:
 - completed -> remove if implementation proves completion;
 - historical rationale -> convert to durable comment/doc if needed;
 - ambiguous -> escalate.
+
+## Convergence rule
+
+Text that already reads as durable rationale and contains no process metadata is not a finding, even if RepoMeld could phrase it differently.
+
+If a candidate is already in the form RepoMeld would produce, leave it unchanged.
+
+Repeated runs must converge: never rephrase already-normalized text, and never introduce new process metadata while cleaning.
