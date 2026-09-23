@@ -1,6 +1,6 @@
 ---
 name: repomeld
-description: Self-orchestrating repository hygiene for software projects developed with SDD, coding agents, or vibe coding. Audit and consolidate AI-development traces such as S1/S2/M1/M2 stage markers, verbose process comments, temporary plans/reports/scratch files, stale TODOs, duplicated rationale, and abandoned agent artifacts; normalize comments against per-language template exemplars loaded selectively by scan results; preserve durable engineering knowledge and observable behavior. Use when the user asks to clean, consolidate, normalize, organize, or remove AI/SDD development traces or messy comments from a repository. Do not use as a justification for unrelated refactoring, feature work, API changes, schema changes, dependency upgrades, or behavior changes.
+description: Self-orchestrating repository hygiene for software projects developed with SDD, coding agents, or vibe coding. Audit and consolidate AI-development traces such as S1/S2/M1/M2 stage markers, verbose process comments, temporary plans/reports/scratch files, stale TODOs, duplicated rationale, and abandoned agent artifacts; normalize comments against per-language template exemplars loaded selectively by scan results; and, inside a user-chosen scope, add missing necessary comments (public API documentation, non-obvious constraints, workarounds, suppression reasons, deprecation markers) from the same templates. Preserve durable engineering knowledge and observable behavior. Use when the user asks to clean, consolidate, normalize, organize, enhance, or remove AI/SDD development traces or messy comments from a repository, or to complete, enhance, or add necessary code comments. Do not use as a justification for unrelated refactoring, feature work, API changes, schema changes, dependency upgrades, or behavior changes.
 ---
 
 # RepoMeld
@@ -23,6 +23,7 @@ RepoMeld is runtime-agnostic. It describes logical orchestration, not vendor-spe
 10. Transformations must be idempotent: repeated RepoMeld runs should converge, not keep rephrasing text.
 11. Use the host's highest useful parallelism, not its maximum possible parallelism.
 12. Do not fail merely because subagents are unavailable; degrade to sequential execution while preserving the same workflow semantics.
+13. Collect every user decision once, in the INIT upfront gate. After the gate closes, run unattended: no mid-run questions; undetermined items become escalations resolved through the resume protocol.
 
 ## Runtime capability discovery
 
@@ -86,6 +87,12 @@ Any ambiguous deletion, behavior-sensitive change, ownership conflict, unexplain
 - Discover repository-native validation from manifests, build files, CI, contributor docs, and test configuration.
 - Avoid creating persistent RepoMeld state inside the repository unless the user explicitly requests it. Prefer in-memory or temporary state.
 
+### Upfront gate
+
+After the baseline is captured, resolve every user decision in one batched interaction following `references/scope-policy.md`: the cleanup scope, L3 pre-authorization, and the execution mode. Ask only what the invocation has not already determined; if the invocation pins everything, do not ask at all. In a non-interactive runtime, default to uncommitted changes only and record "scope not user-confirmed" as a verification gap.
+
+Once the gate closes, the run proceeds unattended through REPORT. No phase may ask the user anything; undetermined items become escalations handled by the Escalation resume protocol. The chosen scope is frozen: DISCOVER maps it, PARTITION shards it, AUDIT and APPLY stay inside it, VERIFY confirms nothing leaked outside it.
+
 ## DISCOVER
 
 Load `references/subskills/01-discover.md`.
@@ -117,6 +124,8 @@ Choose semantic shards dynamically. Preferred order:
 
 Do not ask the user to choose worker count unless a real external constraint requires it.
 
+Shards are constructed exclusively from paths inside the frozen cleanup scope; out-of-scope areas are read-only dependency context at most.
+
 Determine topology from repository breadth, semantic boundaries, dependency coupling, context footprint, risk, and runtime concurrency.
 
 Heuristics:
@@ -134,9 +143,11 @@ Load `references/subskills/03-audit.md`, `references/cleanup-policy.md`, `refere
 
 Audit is strictly read-only.
 
-When a shard contains comments or docs, each audit worker additionally loads `references/comment-library/INDEX.md`, then loads only the library files matching the languages actually detected inside its own shard (normally one to three files, per the INDEX loading table). Never load the whole comment-library directory. Template selection follows `references/comment-library/selection-guide.md`; rewrite candidates must name the template they would apply.
+When a shard contains comments or docs, each audit worker additionally loads `references/comment-library/INDEX.md`, then loads only the library files matching the languages actually detected inside its own shard (normally one to three files, per the INDEX loading table). Never load the whole comment-library directory. Template selection follows `references/comment-library/selection-guide.md`; rewrite and add candidates must name the template they would apply.
 
 Comment scanning is performed by reading code with model file tools, not by scripts. `scripts/repomeld_scan.py` remains an optional aid; its comment-related output is candidate leads only, never decision authority, and RepoMeld stays fully functional without it.
+
+Audit completeness is file-level: every in-scope, non-vendor, non-generated source file must be read, never sampled. Each worker reports `coverage` (files in scope, files audited, skipped with reasons) in its result; the barrier snapshot aggregates it.
 
 When delegation is useful, create independent audit workers from `prompts/worker.md`. Give each worker only:
 
@@ -186,6 +197,8 @@ Every planned action must include:
 
 Comment rewrites are planned as whole-comment-unit transformations, never minimal word-level patches: for each rewrite, the plan references the selected template from `references/comment-library/` and the complete target text of the logical comment block (all lines of the unit in one pass), so mixed half-old half-new blocks never enter the codebase.
 
+Add actions (missing necessary comments) are planned the same way: each names the selected template, the complete text of the new comment unit, and the code facts each slot was filled from. Only necessity triggers from `references/cleanup-policy.md` justify an add.
+
 For a minimal concrete example of worker results, plan actions, and verification results, see `references/worked-example.md`.
 
 ## AUDIT_BARRIER
@@ -194,7 +207,7 @@ Do not begin mutation until all required audit groups are complete or explicitly
 
 Freeze the cleanup plan for the apply epoch. New low-risk observations may be recorded, but do not silently expand scope into risky or cross-owned changes.
 
-Record a structured coverage snapshot at this barrier: shards audited, shards explicitly excluded with reasons, and findings deferred as escalations.
+Record a structured coverage snapshot at this barrier: shards audited, shards explicitly excluded with reasons, file-level audit coverage per shard, and findings deferred as escalations.
 
 ## APPLY_FANOUT
 
@@ -205,7 +218,7 @@ Assign exclusive write ownership by shard. Prefer reusing the same semantic shar
 Default permissions by risk (summary only; `references/risk-policy.md` is the authoritative definition and must not diverge from it):
 
 - L0 metadata/process-only: auto-apply.
-- L1 comment/documentation normalization: auto-apply.
+- L1 comment and documentation work (rewrites and additions): auto-apply.
 - L2 non-runtime artifact deletion/move: only after reference analysis and policy checks.
 - L3 runtime dead-code removal: escalate unless user explicitly authorized it.
 - L4 behavior-changing code: forbidden by default.
@@ -267,11 +280,11 @@ Load `references/subskills/07-report.md`.
 Report:
 
 - execution mode and topology actually used;
-- scopes/shards processed;
-- barrier coverage snapshots (shards audited; shards explicitly excluded with reasons);
+- the recorded cleanup scope and whether it was user-confirmed or the non-interactive default;
+- file-level scope coverage (in-scope files audited / skipped with reasons), alongside barrier coverage snapshots (shards audited; shards explicitly excluded with reasons);
 - files modified/deleted/moved;
 - stage markers and agent narration removed;
-- comments/docs normalized;
+- comments/docs normalized and necessary comments added;
 - process knowledge converted into durable engineering knowledge;
 - validation performed and outcomes;
 - unresolved/escalated items;
@@ -297,8 +310,9 @@ Items the user rejects are recorded as rejected with the reason. Do not re-audit
 
 RepoMeld is complete only when:
 
-- the requested repository scope was audited;
+- the requested repository scope was audited at file level, or every skipped file was reported with a reason;
 - accepted cleanup actions were applied or explicitly reported as skipped/escalated;
+- the final diff touches nothing outside the frozen cleanup scope;
 - deleted artifacts have no unresolved references;
 - retained rationale has a durable canonical location;
 - repository-level verification was attempted to the extent supported by the project/runtime;

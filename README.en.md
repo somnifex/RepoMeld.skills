@@ -30,7 +30,10 @@ It is not an "AI comment deleter" and not a license for unrelated refactoring �
 - Independent Verifier runs maker-checker style review in a fresh context.
 - An L0–L5 risk model keeps hygiene from turning into behavior refactoring.
 - Internal subskills load progressively to keep the main context small.
-- `references/comment-library/` comment template library: per-language canonical comment exemplars sourced from authoritative guides (PEP 8/257, Google Style, official Go/Rust docs, etc.). Auditors **selectively load** only the files matching the languages detected by the scan (never the whole directory); comment rewrites must fill a selected template and replace the entire logical comment unit in one pass — no word-by-word minimal patches; load-bearing comments (license headers, generated-file markers, build directives, suppression directives, doctests, etc.) are never touched.
+- `references/comment-library/` comment template library: per-language canonical comment exemplars sourced from authoritative guides (PEP 8/257, Google Style, official Go/Rust docs, etc.). Auditors **selectively load** only the files matching the languages detected by the scan (never the whole directory); comment rewrites and additions must fill a selected template and produce the entire logical comment unit in one pass — no word-by-word minimal patches; load-bearing comments (license headers, generated-file markers, build directives, suppression directives, doctests, etc.) are never touched.
+- Comment addition (`add`) is a first-class action: when a public API lacks docs, a non-obvious constraint is unexplained, a workaround has no link, a suppression directive lacks a reason, or a public deprecation has no marker, RepoMeld writes the necessary comment from a template. No quantity caps — instead every added comment must pass a fact-pinning review (the verifier traces each claim back to the code).
+- A single upfront gate: the only interaction point, in INIT after the baseline is captured, resolves the cleanup scope (full repository / uncommitted changes / recent commits / explicit paths / audit-only) and L3 authorization in one batched ask; the rest of the run is unattended. In non-interactive runtimes it defaults to uncommitted changes only and records the gap.
+- Verifiable completeness: every in-scope, non-vendor, non-generated source file is read (no sampling); workers report file-level coverage, aggregated in the barrier snapshot and the final report.
 - `scripts/repomeld_scan.py` provides an optional read-only, deterministic repository inventory; comment analysis itself is done by the model reading code, not by scripts.
 
 ## How it works
@@ -87,12 +90,14 @@ Execution follows a strict phase order:
 
 The two barriers are hard sync points: **no mutation before the Audit Barrier, and no repository-level verification before the Apply Barrier.**
 
+The upfront gate sits in INIT (after baseline capture): it resolves the cleanup scope and L3 authorization in one batched ask, after which the run is unattended — the only user interaction of the entire run.
+
 ### Risk levels
 
 | Level | Scope                                                          | Default policy                                  |
 | ----- | -------------------------------------------------------------- | ----------------------------------------------- |
 | L0    | Metadata / process markers (S1/M2, agent narration)            | Auto-apply                                      |
-| L1    | Comment / documentation normalization                          | Auto-apply                                      |
+| L1    | Comment / documentation rewrites and additions                 | Auto-apply                                      |
 | L2    | Deletion / relocation of non-runtime files                     | Only after reference analysis and policy checks |
 | L3    | Runtime dead-code removal                                      | Escalate for human confirmation                 |
 | L4    | Behavior-changing code edits                                   | Forbidden by default                            |
@@ -119,6 +124,14 @@ Scoped to specific directories:
 ```text
 Use RepoMeld on apps/api and packages/auth; do not touch other directories or pre-existing uncommitted changes.
 ```
+
+Comment enhancement (delete, rewrite, and add what is necessary):
+
+```text
+Use RepoMeld to enhance the comments in this repository: remove process residue and agent narration, normalize against the templates, and add missing documentation for public APIs. Ask me about the scope once, then run unattended.
+```
+
+When the scope is not specified, RepoMeld asks once at startup (full repository / uncommitted changes only / last N commits / explicit paths / audit-only) plus L3 authorization, then runs unattended to the report.
 
 Practical tips:
 
@@ -158,6 +171,7 @@ repomeld/
 │   └── icon.svg
 ├── references/                  # Policies loaded progressively per phase
 │   ├── orchestration-protocol.md
+│   ├── scope-policy.md          # Upfront gate and cleanup-scope semantics
 │   ├── cleanup-policy.md
 │   ├── knowledge-preservation.md
 │   ├── partitioning-policy.md

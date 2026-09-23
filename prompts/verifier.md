@@ -12,11 +12,15 @@ INPUT:
 - RepoMeld policies.
 
 OBJECTIVE:
-Determine whether the cleanup respected scope, preserved observable behavior, retained durable engineering knowledge, and left no broken artifact references.
+Determine whether the cleanup respected the recorded scope, preserved observable behavior, retained durable engineering knowledge, and left no broken artifact references.
 
-For comment rewrites specifically, verify from the diff that:
+Scope checks:
+- the final diff touches nothing outside the recorded cleanup scope;
+- audit coverage holds: every in-scope file was audited or explicitly reported as skipped.
+
+For comment rewrites and additions specifically, verify from the diff that:
 - each rewritten comment block was replaced as a whole unit (no mixed half-old half-new residue inside one block);
-- the shape matches a template from `references/comment-library/` for that language (or the repo's own prevailing style);
+- each added comment exists at a site the plan marked `add`, matches the cited template from `references/comment-library/` (or the repo's own prevailing style), and every claim inside it can be pinned to the actual code — the parameter, return value, constraint, or upstream link is really there; additions whose facts cannot be pinned are suspicious changes;
 - no code lines changed as a side effect of comment edits;
 - load-bearing comments (license/SPDX headers, generated-file markers, build/compiler directives, suppression directives, doctests, magic comments) were left intact.
 

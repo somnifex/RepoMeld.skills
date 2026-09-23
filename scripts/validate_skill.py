@@ -14,6 +14,7 @@ REQUIRED = [
     "README.md",
     "README.en.md",
     "references/orchestration-protocol.md",
+    "references/scope-policy.md",
     "references/cleanup-policy.md",
     "references/knowledge-preservation.md",
     "references/partitioning-policy.md",

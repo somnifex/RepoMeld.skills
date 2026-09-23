@@ -7,6 +7,7 @@
   "properties": {
     "repository_root": {"type": "string"},
     "baseline": {"type": "object", "description": "VCS baseline captured in INIT: branch, commit, status/diff summary."},
+    "scope": {"type": "object", "description": "User-chosen cleanup scope from the upfront gate: mode (full_repository | uncommitted | recent_commits | paths | audit_only), plus commit_count / since / paths when applicable. Everything outside this scope is frozen for the whole run."},
     "protected_paths": {
       "type": "array",
       "items": {"type": "string"},
@@ -23,7 +24,7 @@
           "id": {"type": "string"},
           "path": {"type": "string"},
           "category": {"type": "string", "description": "Finding category, using the finding.schema.json vocabulary."},
-          "action": {"type": "string", "enum": ["delete", "rewrite", "relocate", "update_references"], "description": "Preserved knowledge is not an action; escalations live in the escalations array."},
+          "action": {"type": "string", "enum": ["delete", "rewrite", "add", "relocate", "update_references"], "description": "Preserved knowledge is not an action; escalations live in the escalations array. Add actions introduce one complete new comment unit; reason must cite the comment-library template id and the code facts each slot was filled from."},
           "risk": {"type": "string", "enum": ["L0", "L1", "L2", "L3", "L4", "L5"]},
           "owner": {"type": "string", "description": "Write owner; must be the id of a shard in shards[]."},
           "reason": {"type": "string"},

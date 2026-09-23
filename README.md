@@ -30,7 +30,10 @@
 - Independent Verifier 使用全新上下文做 maker-checker 式检查。
 - L0–L5 风险模型阻止 hygiene 演变成行为重构。
 - 内部 subskills 渐进式加载，降低主上下文压力。
-- `references/comment-library/` 注释案例库：按语言组织的注释范本（源自 PEP 8/257、Google Style、Go/Rust 官方文档等权威来源）。审计时**按扫描到的语言选择性加载**（绝不全量加载）；改写注释必须套用范本填空，并按"逻辑注释单元"整块全面修正，不做逐词最小修补；承重注释（许可证头、生成标记、构建指令、抑制指令、doctest 等）禁改。
+- `references/comment-library/` 注释案例库：按语言组织的注释范本（源自 PEP 8/257、Google Style、Go/Rust 官方文档等权威来源）。审计时**按扫描到的语言选择性加载**（绝不全量加载）；改写与补写注释必须套用范本填空，并按"逻辑注释单元"整块全面修正，不做逐词最小修补；承重注释（许可证头、生成标记、构建指令、抑制指令、doctest 等）禁改。
+- 注释补写（add）是一等动作：公开 API 缺文档、非显然约束无解释、workaround 无链接、抑制指令缺 reason、公开弃用无标记时按范本补写必要注释；不设数量上限，但每条新增注释都要通过"事实指认"审查（verifier 逐条在代码中核实其声称的事实）。
+- 统一前置问答门：唯一交互点在 INIT（baseline 捕获后），一次性确认清理范围（全仓库 / 仅未提交 / 最近提交 / 指定路径 / 仅审计）与 L3 授权；之后全程无人值守，未决事项运行末 escalation。无法交互时默认仅未提交改动并记录验证缺口。
+- 全面检查可验证：范围内非 vendor/非生成源文件 100% 通读（禁止抽样），worker 汇报文件级 coverage，barrier 快照与最终报告公开覆盖数。
 - `scripts/repomeld_scan.py` 提供可选的只读、确定性 repository inventory；注释分析本身由大模型阅读完成，不依赖脚本。
 
 ## 工作原理
@@ -87,12 +90,14 @@ VERIFY(changes)
 
 两个 barrier 是硬同步点：**Audit Barrier 之前绝不进入 mutation，Apply Barrier 之前绝不开始 repository 级验证。**
 
+统一前置问答门位于 INIT（baseline 捕获后）：一次性确认清理范围与 L3 授权，之后全程无人值守；这是整个运行中唯一的用户交互点。
+
 ### 风险分级
 
 | 级别 | 范围                              | 默认策略           |
 | -- | ------------------------------- | -------------- |
 | L0 | 元数据 / 过程标记（S1/M2、agent 叙事等）     | 自动执行           |
-| L1 | 注释 / 文档归一化                      | 自动执行           |
+| L1 | 注释 / 文档改写与补写                    | 自动执行           |
 | L2 | 非运行时文件的删除 / 移动                  | 引用分析 + 策略检查后执行 |
 | L3 | 运行时死代码删除                        | 升级为人工确认        |
 | L4 | 行为改变类代码修改                       | 默认禁止           |
@@ -119,6 +124,14 @@ VERIFY(changes)
 ```text
 使用 RepoMeld 处理 apps/api 和 packages/auth；不要碰其他目录或已有未提交改动。
 ```
+
+注释增强（该删的删、该改的改、该补的补）：
+
+```text
+使用 RepoMeld 增强当前仓库的注释：清理过程残留与 agent 叙事，按范本规范化，并为公开 API 补写缺失的文档注释。范围先问我一次，之后无人值守执行。
+```
+
+不指定范围时，RepoMeld 会在启动时问一次范围（全仓库 / 仅未提交改动 / 最近 N 次提交 / 指定路径 / 仅审计）与 L3 授权，然后无人值守跑到报告。
 
 使用建议：
 
@@ -158,6 +171,7 @@ repomeld/
 │   └── icon.svg
 ├── references/                  # 按阶段渐进加载的策略文档
 │   ├── orchestration-protocol.md
+│   ├── scope-policy.md          # 统一前置问答门与清理范围语义
 │   ├── cleanup-policy.md
 │   ├── knowledge-preservation.md
 │   ├── partitioning-policy.md

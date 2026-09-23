@@ -5,11 +5,14 @@ interface:
     traces such as S1/S2/M1/M2 stage markers, verbose process comments, temporary
     plans/reports/scratch files, stale TODOs, duplicated rationale, and abandoned
     agent artifacts; normalize comments against per-language template exemplars loaded
-    selectively by scan results; preserve durable engineering knowledge and observable
-    behavior. Use when the user asks to clean, consolidate, normalize, organize, or
-    remove AI/SDD development traces or messy comments from a repository. Do not use
-    as a justification for unrelated refactoring, feature work, API changes, schema
-    changes, dependency upgrades, or behavior changes.
+    selectively by scan results; and, inside a user-chosen scope, add missing necessary
+    comments (public API documentation, non-obvious constraints, workarounds, suppression
+    reasons, deprecation markers) from the same templates. Preserve durable engineering
+    knowledge and observable behavior. Use when the user asks to clean, consolidate,
+    normalize, organize, enhance, or remove AI/SDD development traces or messy comments
+    from a repository, or to complete, enhance, or add necessary code comments. Do
+    not use as a justification for unrelated refactoring, feature work, API changes,
+    schema changes, dependency upgrades, or behavior changes.
   icon_small: assets/icon.svg
   icon_large: assets/icon.svg
 policy:

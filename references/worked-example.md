@@ -8,6 +8,15 @@ A compact end-to-end shape reference for RepoMeld contracts. Values are illustra
 使用 RepoMeld 清理当前仓库。只自动执行 L0-L2，L3+ 升级报告，不改变运行时行为。
 ```
 
+## Upfront gate (INIT)
+
+The invocation pins the execution mode (auto-apply L0–L2, escalate L3+), but not the scope, so the gate asks once and the run proceeds unattended:
+
+```text
+scope: full repository (user-confirmed via upfront gate)
+l3_preauthorized: no (L3 escalates at end, resolved via resume protocol)
+```
+
 ## Repository map excerpt (DISCOVER)
 
 ```text
@@ -65,11 +74,31 @@ Root Coordinator
       "proposed_change": null,
       "reference_evidence": ["grep -rn 'm2-notes' -> no matches outside the file itself"],
       "requires_review": false
+    },
+    {
+      "id": "F-003",
+      "scope": "packages/auth + packages/ui",
+      "path": "packages/auth/src/token.ts",
+      "line_start": 88,
+      "line_end": 88,
+      "category": "missing_documentation",
+      "action": "add",
+      "risk": "L1",
+      "confidence": 0.85,
+      "rationale": "Exported refreshToken() has no doc comment; library package, necessity trigger applies. Template javascript-typescript.md#J1; params/returns copied from the signature.",
+      "proposed_change": "/** Refreshes the stored access token using {@link code}. Rejects with AuthError when the refresh endpoint returns 401. */",
+      "reference_evidence": [],
+      "requires_review": false
     }
   ],
   "changed_paths": [],
   "risks": [],
   "validation": [],
+  "coverage": {
+    "files_in_scope": 37,
+    "files_audited": 37,
+    "skipped": []
+  },
   "notes": []
 }
 ```
@@ -80,6 +109,7 @@ Root Coordinator
 {
   "repository_root": "/repo",
   "baseline": {"branch": "main", "commit": "abc1234", "clean": true},
+  "scope": {"mode": "full_repository", "user_confirmed": true},
   "protected_paths": [],
   "execution_mode": "PARALLEL_NATIVE",
   "shards": [
@@ -111,6 +141,18 @@ Root Coordinator
       "preservation_rationale": null,
       "reference_evidence": ["grep -rn 'm2-notes' -> no references"],
       "verification": ["grep -rn 'm2-notes' ."]
+    },
+    {
+      "id": "A-003",
+      "path": "packages/auth/src/token.ts",
+      "category": "missing_documentation",
+      "action": "add",
+      "risk": "L1",
+      "owner": "packages-auth-ui",
+      "reason": "Public API without docs; template javascript-typescript.md#J1, slots filled from the signature and the 401 handling in the function body.",
+      "preservation_rationale": null,
+      "reference_evidence": [],
+      "verification": ["pnpm --filter auth lint"]
     }
   ],
   "escalations": [
@@ -132,6 +174,7 @@ Root Coordinator
   "protected_paths": "untouched",
   "checks": [
     {"command": "git diff --stat <baseline>", "status": "pass"},
+    {"command": "git diff --name-only <baseline> (all paths inside recorded scope)", "status": "pass"},
     {"command": "pnpm -r test", "status": "pass"}
   ],
   "suspicious_changes": [],
@@ -143,7 +186,8 @@ Root Coordinator
 
 ```text
 mode: PARALLEL_NATIVE (3 workers, 1 fresh verifier)
-changed: 1 comment rewritten, 1 file deleted, 0 moved
+scope: full repository (user-confirmed); 37/37 in-scope files audited in sample shard
+changed: 1 comment rewritten, 1 necessary comment added, 1 file deleted, 0 moved
 knowledge: vendor serialization constraint retained at original site
 escalated: 1 (L3 dead helper, awaiting user decision)
 impact: no API/schema/config/dependency changes observed; behavior unchanged per diff review + tests

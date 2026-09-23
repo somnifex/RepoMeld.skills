@@ -1,12 +1,12 @@
 # Comment Template Library（注释案例库）
 
-RepoMeld 的注释范本库。注释审计与改写时提供权威、可直接套用的范本，**不让模型即兴生成注释风格**。素材来源为各语言官方风格指南与文档（PEP 8/257、Google Style Guides、go.dev/doc/comment、rustdoc book、Rust API Guidelines、KDoc、MSDN XML docs、phpDocumentor、YARD、Doxygen、ShellCheck、ESLint、MySQL、SPDX 等），出处见各文件末尾。
+RepoMeld 的注释范本库。注释审计、改写与补写时提供权威、可直接套用的范本，**不让模型即兴生成注释风格**。素材来源为各语言官方风格指南与文档（PEP 8/257、Google Style Guides、go.dev/doc/comment、rustdoc book、Rust API Guidelines、KDoc、MSDN XML docs、phpDocumentor、YARD、Doxygen、ShellCheck、ESLint、MySQL、SPDX 等），出处见各文件末尾。
 
 ## 五条铁律
 
 1. **选择性加载**：任何 worker / verifier 默认只加载本 INDEX；确认 shard 内实际出现的语言后，再加载对应的范本文件（通常 1–3 个）。**严禁一次性加载本目录全部文件**；同一种语言只加载一个文件。
 2. **模板填空，不自由发挥**：新增或改写注释必须先从对应范本文件中选定模板，再填入 slot（`⟨...⟩` 标记的部分）。结构、标点、缩进、标签顺序照模板，不重新设计。
-3. **整块全面修正**：改写以"逻辑注释单元"为单位——同一声明/语句上的完整注释块。禁止逐词最小修补：半新半旧的混合块比旧的更糟（拆东墙补西墙）。流程见 `rewrite-recipes.md`。
+3. **整块全面修正**：改写与新增都以"逻辑注释单元"为单位——同一声明/语句上的完整注释块。禁止逐词最小修补：半新半旧的混合块比旧的更糟（拆东墙补西墙）。流程见 `rewrite-recipes.md`。
 4. **仓库惯例优先**：仓库已有主导风格（例：全部使用 NumPy 式 docstring、kernel 风格 C 注释）时沿用仓库风格；风格差异本身不是 finding（收敛规则）。
 5. **承重注释禁改**：下表所列注释承载语义，只能原样保留；疑似失效也走 escalate，不自动删除。
 
@@ -40,6 +40,6 @@ RepoMeld 的注释范本库。注释审计与改写时提供权威、可直接�
 
 ## 审计与改写时的角色分工
 
-- **AUDIT worker**：读 shard → 检测语言集合 → 按上表加载（通常 2–3 个文件）→ 用 `selection-guide.md` 决策树给每条候选注释分类（preserve / rewrite / remove / escalate）。rewrite finding 必须注明将套用的模板编号（如 `python.md#P2`）。
-- **APPLY worker**：按冻结计划执行整块改写；改写前后都直接用文件读写工具重读文件，不依赖脚本。
+- **AUDIT worker**：读 shard → 检测语言集合 → 按上表加载（通常 2–3 个文件）→ 用 `selection-guide.md` 决策树 A 给每条候选注释分类（preserve / rewrite / remove / escalate），用决策树 B 判定候选补写（add）。rewrite/add finding 必须注明将套用的模板编号（如 `python.md#P2`）。
+- **APPLY worker**：按冻结计划执行整块改写与整块新增；改写前后都直接用文件读写工具重读文件，不依赖脚本。
 - **注释扫描由大模型阅读完成**。`scripts/repomeld_scan.py` 仍只是可选的确定性辅助，其注释相关输出仅是候选线索，从不构成决策依据。

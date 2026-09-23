@@ -11,6 +11,7 @@
     "escalations": {"type": "array", "items": {"type": "string"}},
     "ownership_conflicts": {"type": "array", "items": {"type": "string"}},
     "cross_scope_references": {"type": "array", "items": {"type": "string"}},
+    "skipped_scope_findings": {"type": "array", "items": {"type": "string"}, "description": "Ids of worker findings located outside the chosen cleanup scope; recorded for the report, never planned or applied."},
     "summary": {"type": "string"}
   },
   "additionalProperties": true

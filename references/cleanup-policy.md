@@ -1,6 +1,8 @@
 # Cleanup Policy
 
-## Delete candidates
+RepoMeld performs five kinds of actions on comments, docs, and artifacts: delete, rewrite, add, remove, and preserve/relocate. This file defines when each applies.
+
+## Delete candidates (files and artifacts)
 
 Examples of process-only residue:
 
@@ -24,6 +26,22 @@ Before:
 After:
 `// Keep vendor writes sequential; the upstream API does not support concurrent mutations.`
 
+Also rewrite: contradictory comments on the same declaration — merge into one block that matches the code's actual behavior (see `references/comment-library/rewrite-recipes.md` R10); escalate when the code cannot settle which statement is correct.
+
+## Add candidates (necessary comments)
+
+A missing comment is not a finding by itself. Add a comment only when a necessity trigger applies:
+
+- a public/exported API lacks a documentation comment (library code by default; application/script code follows repository convention and is not proactively documented);
+- a non-obvious constraint, invariant, or sentinel value is unexplained (e.g. "-1 means unknown");
+- an active workaround carries no comment (the comment must include the upstream issue link and the removal condition);
+- a suppression directive lacks a reason where the language supports one (recipe R8);
+- a public deprecation has no deprecation marker.
+
+Not necessary — never add: comments restating signatures or obvious behavior, private implementation details, documentation for vendored/generated code, speculative "might be useful later" notes.
+
+Every addition must cite a template from `references/comment-library/` and fill its slots only with facts observable in the code. Additions follow the same whole-unit rule as rewrites: the complete comment unit is written in one pass. Additions are L1, like rewrites.
+
 ## Remove candidates
 
 Remove comments that merely narrate obvious code or agent steps, for example:
@@ -42,9 +60,9 @@ When rewriting or adding comments, do not let the model invent a style. Select a
 
 1. Load `references/comment-library/INDEX.md`.
 2. Load only the library files matching the languages present in the shard (per the INDEX loading table); never the whole directory.
-3. Choose a template from the matching language file, fill its slots from the code's actual behavior, and rewrite the entire logical comment unit in one pass.
+3. Choose a template from the matching language file, fill its slots from the code's actual behavior, and write the entire logical comment unit in one pass.
 
-Minimal word-level patching is forbidden: partial rewrites leave mixed styles and broken context inside one comment block. Each rewrite produces the complete final text of the unit at once, and rewriting must not touch code lines.
+Minimal word-level patching is forbidden: partial rewrites leave mixed styles and broken context inside one comment block. Each rewrite or addition produces the complete final text of the unit at once, and must not touch code lines.
 
 Repo conventions override library defaults: if the shard already uses one consistent style (e.g. NumPy-style docstrings, kernel-style C comments), keep it; style differences alone are never findings. Load-bearing comments (license/SPDX headers, generated-file markers, build/compiler directives, suppression directives, doctests, magic comments) are preserved unchanged and handled via escalation when suspect.
 
@@ -76,6 +94,8 @@ Classify as:
 
 Text that already reads as durable rationale and contains no process metadata is not a finding, even if RepoMeld could phrase it differently.
 
+A missing comment is a finding only when an Add candidate trigger applies; otherwise absence of comments is never actionable.
+
 If a candidate is already in the form RepoMeld would produce, leave it unchanged.
 
-Repeated runs must converge: never rephrase already-normalized text, and never introduce new process metadata while cleaning.
+Repeated runs must converge: never rephrase already-normalized text, never re-add a comment that a previous run already added in template form, and never introduce new process metadata while cleaning.

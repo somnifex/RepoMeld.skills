@@ -13,6 +13,7 @@
     "changed_paths": {"type": "array", "items": {"type": "string"}},
     "risks": {"type": "array", "items": {"type": "string"}},
     "validation": {"type": "array", "items": {"type": "object", "required": ["command", "status"], "properties": {"command": {"type": "string"}, "status": {"type": "string"}, "notes": {"type": "string"}}, "additionalProperties": true}},
+    "coverage": {"type": "object", "description": "File-level audit coverage for the assigned scope. Required for AUDIT results whose scope contains source files.", "required": ["files_in_scope", "files_audited"], "properties": {"files_in_scope": {"type": "integer", "minimum": 0, "description": "Non-vendor, non-generated source files inside the audit scope."}, "files_audited": {"type": "integer", "minimum": 0}, "skipped": {"type": "array", "items": {"type": "object", "required": ["path", "reason"], "properties": {"path": {"type": "string"}, "reason": {"type": "string"}}, "additionalProperties": true}}}},
     "notes": {"type": "array", "items": {"type": "string"}}
   },
   "additionalProperties": true
