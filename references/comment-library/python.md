@@ -94,6 +94,59 @@ class ⟨Class⟩:
 """
 ```
 
+### P9 扩展节（Google / NumPy 附加节，按仓库既有节风格选用）
+```python
+def ⟨connect⟩(*⟨args⟩, **⟨kwargs⟩):
+    """⟨Summary line.⟩
+
+    Args:
+        *⟨args⟩: ⟨Variable length argument list.⟩
+        **⟨kwargs⟩: ⟨Arbitrary keyword arguments.⟩
+
+    Returns:
+        ⟨type⟩: ⟨description⟩
+
+    Note:
+        ⟨Cross-cutting caveat.⟩
+
+    Example:
+        >>> ⟨connect(port=8080)⟩
+        ⟨expected output⟩
+    """
+```
+- 生成器用 `Yields:`（Google）/ `Yields`（NumPy）代替 `Returns`；`*args`/`**kwargs` 按官方约定整名单独成行。
+- NumPy 仓库补充节：`See Also`、`Notes`、`Warning`、`Examples`——`Examples` 里的 `>>>` 是 doctest，**会被执行，承重**。
+
+### P10 属性与字段文档
+```python
+class ⟨Config⟩:
+    """⟨Summary.⟩
+
+    Attributes:
+        ⟨retries⟩ (⟨int⟩): ⟨Number of attempts; must be positive.⟩
+    """
+
+    @property
+    def ⟨retries⟩(self) -> int:
+        """int: ⟨Current retry limit.⟩"""
+```
+- property 的 docstring 写在 getter 上；`int: description` 类型前缀是官方推荐的 property 简写。实例属性也可用赋值后 docstring 或行内 `#:`（napoleon 兼容）。
+- dataclass/pydantic 字段的机器可读描述（`Field(description=...)`）属代码语义，注释审计不动；注释层的唯一入口是类 docstring 的 `Attributes:` 节。
+
+### P11 Sphinx 指令节（reST/Sphinx 仓库）
+```python
+def ⟨legacy⟩():
+    """⟨Summary.⟩
+
+    .. deprecated:: ⟨2.3⟩
+       ⟨Use ⟨new_func⟩ instead.⟩
+
+    .. note::
+       ⟨Caveat paragraph.⟩
+    """
+```
+- `.. versionadded::` / `.. versionchanged::` / `.. warning::` 同理；**指令的缩进是语法的一部分**，改写保持。
+
 ## 行内注释范本（PEP 8 原文规则）
 
 - **块注释**：与被描述代码同缩进，每行以 `# ` 开头（`#` 后一个空格）；段落之间用只含一个 `#` 的行分隔。
@@ -136,6 +189,8 @@ x = x + 1                 # Compensate for border
 | `# pragma: no cover` | coverage.py | 排除覆盖率统计 |
 | `# fmt: off` / `# fmt: on` | black / ruff format | 格式化岛，区间内格式不动 |
 | `# ruff: noqa`、`# isort: skip_file` | ruff / isort | 文件级指令 |
+| `# pyright: ⟨rule⟩=false`、`# pyright: basic`/`strict` | pyright | 文件级配置，须位于文件头部注释 |
+| `# mypy: ignore-errors` | mypy | 整文件关闭类型检查 |
 | `#!/usr/bin/env python3` | shebang | 解释器选择，必须第一行 |
 | `# -*- coding: utf-8 -*-` | PEP 263 | 编码声明 |
 | `>>> ⟨expr⟩` + 期望输出 | doctest | docstring 内的 doctest 会被 pytest/doctest 执行 |

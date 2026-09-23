@@ -26,6 +26,13 @@
   - 版本化：`/*!50110 ⟨...⟩ */`——服务器版本 ≥ 5.01.10 才执行（格式：主版本两位 + 次两位 + release 两位）；
   - 优化器 hint：`/*+ ⟨hint⟩ */`，**hint 会存储在对象定义里**。
   - mysqldump 产物中的这些注释删除 = 语义/兼容性丢失 → 生成产物不动。
+- **`COMMENT ON` 语句（PostgreSQL/Oracle，承重）**：
+```sql
+COMMENT ON TABLE ⟨t⟩ IS '⟨Why this table exists / ownership.⟩';
+COMMENT ON COLUMN ⟨t⟩.⟨c⟩ IS '⟨Unit, sentinel values, constraints.⟩';
+```
+  存储进系统目录、由客户端（psql `\d+`、数据字典）读取——是**语句**而非注释，禁止按注释清理；改写等同文档变更。
+  MySQL 对应语义是列/表定义里的 `COMMENT '⟨...⟩'` **子句**（同为存储语义，属代码行不是注释行）。
 - 迁移文件头部注释（这次迁移为什么存在）：保留——它承载历史与回滚依据。
 
 ## YAML / TOML / INI / properties / .env

@@ -1,6 +1,6 @@
 # Comment Template Library（注释案例库）
 
-RepoMeld 的注释范本库。注释审计、改写与补写时提供权威、可直接套用的范本，**不让模型即兴生成注释风格**。素材来源为各语言官方风格指南与文档（PEP 8/257、Google Style Guides、go.dev/doc/comment、rustdoc book、Rust API Guidelines、KDoc、MSDN XML docs、phpDocumentor、YARD、Doxygen、ShellCheck、ESLint、MySQL、SPDX 等），出处见各文件末尾。
+RepoMeld 的注释范本库。注释审计、改写与补写时提供权威、可直接套用的范本，**不让模型即兴生成注释风格**。素材来源为各语言官方风格指南与文档（PEP 8/257、Google Style Guides、go.dev/doc/comment、rustdoc book、Rust API Guidelines、KDoc、Swift Markup、Effective Dart、MSDN XML docs、phpDocumentor、YARD、Doxygen、kernel-doc、ShellCheck、PowerShell、ESLint、GraphQL/protobuf/JSON Schema 规范、MySQL、CMake/GNU make/HCL/Apache、SPDX 等），出处见各文件末尾。
 
 ## 五条铁律
 
@@ -21,6 +21,9 @@ RepoMeld 的注释范本库。注释审计、改写与补写时提供权威、�
 | 可执行文档 | docstring 中的 doctest（`>>>`）、Rust doc test | 被测试框架编译并执行，删除 = 删测试 |
 | 运行时魔法注释 | `#!/usr/bin/env python3`、`# frozen_string_literal: true` | 解释器语义 |
 | fallthrough 注释 | `/* fall through */`、`/* FALLTHRU */`（C/C++） | 编译器/静态分析识别 |
+| 文档式描述（不是注释的"注释"） | GraphQL `"""` 描述、SQL `COMMENT ON` / MySQL `COMMENT` 子句、PowerShell 注释式帮助、proto 前置注释（部分 codegen 生成文档）、JSON Schema `$comment` | 被内省/工具/帮助系统读取，属 API/文档语义 |
+| doc comment 内的代码块与列表 | godoc 缩进块（G8）、rustdoc/KDoc/dartdoc 代码块、`@example` | 缩进与空行是渲染语义 |
+| 运行前置条件 | `#requires`（PowerShell）、`.gitignore` 转义与 `!` 否定、Makefile `define` 块内注释 | 删除/改写改变运行或展开行为 |
 | 预处理指令型"注释" | `#region` / `#endregion`（C#） | 不是注释，是预处理指令 |
 
 ## 加载对照表
@@ -35,8 +38,11 @@ RepoMeld 的注释范本库。注释审计、改写与补写时提供权威、�
 | `.rs` | `rust.md` |
 | `.java` 或 `.cs` | `java-csharp.md` |
 | `.c` / `.cc` / `.cpp` / `.h` / `.hpp` | `c-cpp.md` |
-| `.sh` / `.bash` / `.rb` / `.php` / `.pl` / `.r` / `.lua` 等 | `shell-dynamic.md` |
+| `.kt` / `.kts` / `.swift` / `.dart` | `kotlin-swift-dart.md` |
+| `.sh` / `.bash` / `.rb` / `.php` / `.ps1` / `.psm1` / `.bat` / `.cmd` / `.pl` / `.r` / `.lua` 等 | `shell-dynamic.md` |
 | `.html` / `.css` / `.scss` / `.sql` / `.yaml` / `.toml` / `.ini` / `.properties` / `.env` / `Dockerfile` | `markup-config.md` |
+| `.graphql` / `.gql` / `.proto` / `.json` / `.jsonc` / `.json5` / OpenAPI 文件 | `schema-protocol.md` |
+| `CMakeLists.txt` / `Makefile` / `*.mk` / `*.tf` / `*.hcl` / `*.gradle` / `BUILD` / `*.bzl` / `nginx.conf` / `httpd.conf` / `.gitignore` / `.dockerignore` / `.editorconfig` | `build-infra.md` |
 
 ## 审计与改写时的角色分工
 

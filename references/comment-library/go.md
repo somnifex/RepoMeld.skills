@@ -60,6 +60,35 @@ package rc4
 - 标题：单独一行 `# ⟨Title⟩`，前后空行。
 - 链接定义：`[Text]: ⟨URL⟩` 行，正文用 `[Text]` 引用；doc 内互链 `[Name1.Name2]`、`[pkg.Name]`。
 
+### G7 方法
+```go
+// Read reads up to len(p) bytes into p and returns the number of
+// bytes read.
+func (r *⟨Reader⟩) Read(⟨p⟩ []byte) (n int, err error)
+```
+```go
+// Push pushes ⟨element⟩ onto the queue and reports whether the queue
+// was previously empty.
+func (q *⟨Queue⟩) Push(⟨element⟩ ⟨T⟩) bool
+```
+- 方法注释以**方法名**开头（不以类型名开头）；沿用 G2 的 `reports whether` 约定。
+- 接收者名短小（类型小写首字母或惯用缩写），同一类型全仓库一致——接收者命名属代码风格，注释改写不顺手改名。
+
+### G8 列表与代码块（godoc 富文本，缩进是语义）
+```go
+// ⟨Summary.⟩
+//
+// Rules:
+//   - ⟨first item⟩
+//   - ⟨second item⟩
+//
+// Example:
+//
+//	⟨example line⟩
+```
+- 列表行以 `-`/`*`/`+` 或 `数字.` 起始；缩进的注释行渲染为代码块——**缩进与空行是渲染语义**，整块改写时保持结构。
+- gofmt 会把列表项缩进统一为 tab；交给 gofmt 即可。
+
 ## 行内注释范本
 
 ```go

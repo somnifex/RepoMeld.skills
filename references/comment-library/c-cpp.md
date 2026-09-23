@@ -22,6 +22,7 @@
 - 等价风格（跟随仓库现状）：`/*! ... */`（Qt 风格）、`///`（C++ 风格）、`//!`（成员）；Javadoc 风格用 `@param`，Qt 风格用 `\param`。
 - 成员后置注释：`int ⟨var⟩; ///< ⟨description after the member⟩`（仅对成员/参数有效）。
 - `JAVADOC_AUTOBRIEF` 开启时首句即 brief——首句写完整短句。
+- Doxygen 专用命令跟随仓库现状（`\brief`、`\note`、`\warning`、`\see`、`\pre`、`\file` 等）；文件级文档用 `\file ⟨name⟩` 块；**不在新注释里混入仓库未使用的命令集**。
 
 ### CC2 类注释（Google C++ 官方示例）
 ```cpp
@@ -93,6 +94,22 @@ if (std::find(v.begin(), v.end(), element) != v.end()) {
 ```
 - 官方原文：**"NEVER try to explain HOW your code works in a comment: it's much better to write the code so that the working is obvious"**——注释讲 what 与 why，放在函数头，而非散落函数体内。
 - 数据结构要重点注释（每行一个声明、行尾短注释）；API 函数注释用 kernel-doc 格式；禁止重复函数签名的 boilerplate。
+
+### CC7 kernel-doc 格式（kernel 风格仓库的 API 函数注释）
+```c
+/**
+ * ⟨func_name⟩() - ⟨Brief description of function.⟩
+ * @⟨arg1⟩: ⟨description of arg1⟩
+ * @⟨arg2⟩: ⟨description of arg2⟩
+ *
+ * ⟨Longer description: context, constraints, locking rules.⟩
+ *
+ * Context: ⟨locking / interrupt context⟩ （可选节）
+ * Return: ⟨description of the return value⟩
+ */
+```
+- 语法要点：`/**` 开头；首行 `函数名() - 简述`；参数行 `@名:`；节标题（`Return:`、`Context:` 等）独立成行；`scripts/kernel-doc` 据此解析生成文档。
+- 已有 kernel-doc 块**不得改写成 Doxygen 风格**；非 API 函数的普通注释不必套此格式。
 
 ## 承重注释
 

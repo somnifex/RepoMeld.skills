@@ -52,6 +52,55 @@ var ⟨sb⟩;
 此时 JSDoc 是**语义信息**：删除或改错会改变类型检查结果 → 承重，禁改。
 - 常用类型标注标签（TS 官方支持）：`@type` `@param` `@returns` `@typedef` `@callback` `@template` `@satisfies` `@public/@private/@protected/@readonly/@override`；`@async` 等不在支持列表，别引入。
 
+### J4 文件头
+```js
+/**
+ * @file ⟨One-line purpose of the file, plus cross-file constraints.⟩
+ */
+```
+- `@fileoverview` / `@overview` 是 JSDoc 同义词；TSDoc 生态用 `@packageDocumentation`（含库概览段落）——按仓库既有习惯二选一，不混用。
+- `@module ⟨name⟩` 声明模块标识（CommonJS / 无导出的文件）。
+
+### J5 类型定义（checkJs 与 .js 库的类型承载）
+```js
+/**
+ * @typedef {Object} ⟨Person⟩
+ * @property {string} ⟨name⟩ - ⟨Full name.⟩
+ * @property {number} [⟨age⟩] - ⟨Optional age.⟩
+ */
+```
+```js
+/**
+ * @callback ⟨RequestHandler⟩
+ * @param {⟨Request⟩} ⟨req⟩ - ⟨The incoming request.⟩
+ * @returns {Promise<⟨Response⟩>} ⟨The response.⟩
+ */
+```
+```js
+/**
+ * @template {object} ⟨T⟩
+ * @param {⟨T⟩} ⟨value⟩
+ * @returns {⟨T⟩}
+ */
+```
+在 `.ts` 里用 `@typedef` 描述结构类型（TS 官方支持）；此时 typedef 是**类型语义**，承重。
+
+### J6 TSDoc 扩展标签（TS 库工程）
+```ts
+/**
+ * ⟨Summary.⟩
+ * @remarks ⟨Longer context: contracts, performance notes.⟩
+ * @defaultValue ⟨false⟩
+ * @example
+ * ```ts
+ * ⟨usage snippet⟩
+ * ```
+ * @beta
+ */
+```
+- 标准 release tags：`@alpha` / `@beta` / `@experimental` / `@public` / `@internal`。`@internal` 会被 API Extractor 从公开 API 面剥离——**改它 = 改 API 可见性口径，承重**。
+- `@see ⟨link⟩`、`@throws ⟨desc⟩` 同属标准标签。
+
 ## 行内注释范本
 
 - `// ⟨sentence⟩`：`//` 后一个空格（ESLint spaced-comment）；优先大写开头完整句（capitalized-comments）。

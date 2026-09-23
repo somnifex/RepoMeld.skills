@@ -186,7 +186,7 @@ Root Coordinator
 
 ```text
 mode: PARALLEL_NATIVE (3 workers, 1 fresh verifier)
-scope: full repository (user-confirmed); 37/37 in-scope files audited in sample shard
+scope: full repository (user-confirmed); 3/3 shards audited at full file coverage
 changed: 1 comment rewritten, 1 necessary comment added, 1 file deleted, 0 moved
 knowledge: vendor serialization constraint retained at original site
 escalated: 1 (L3 dead helper, awaiting user decision)

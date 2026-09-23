@@ -45,6 +45,18 @@ public ⟨int⟩ ⟨method⟩(⟨String p1⟩) { ... }
 - `@return the customer ID` 是官方点名的错误写法 → `Returns the customer ID.`（或 `{@return ...}`）。
 - 覆盖范围：每个可见 class / member 至少有 Javadoc；"simple, obvious" 成员（`getFoo()`）可豁免；override 不强制（需要时只写 override 特有信息，不复述父类）。
 
+#### JC6 包文档 / 内联标签 / HTML 转义
+包文档写 `package-info.java`：
+```java
+/**
+ * ⟨Provides ⟨...⟩ for ⟨domain⟩. Not thread-safe unless noted.⟩
+ */
+package com.example.⟨pkg⟩;
+```
+- 内联标签：`{@code ⟨literal⟩}`（防止 HTML 解析，代码与标识符一律包住）、`{@link ⟨Class#member⟩}`（交叉链接）、`{@literal ⟨char⟩}`、`{@value}`。
+- **Javadoc 正文是 HTML**：`<`、`>`、`&` 必须写作 `&lt;` / `&gt;` / `&amp;`——改写时保持转义，不得引入裸角括号。
+- 其他常用 block tag：`@since ⟨version⟩`、`@see ⟨reference⟩`；`@author` 是否保留跟随仓库现状（Google Style：新文件不加 author line）。
+
 #### JC4 TODO（Google Java Style 现行格式）
 ```java
 // TODO: ⟨crbug.com/12345678⟩ - ⟨Remove this after the 2047q4 compatibility window expires.⟩

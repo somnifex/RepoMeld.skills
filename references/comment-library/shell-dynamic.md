@@ -1,4 +1,4 @@
-# Shell / Ruby / PHP / 其他脚本语言范本（加载条件：`.sh` `.bash` `.rb` `.php` `.pl` `.r` `.lua` 等）
+# Shell / Ruby / PHP / PowerShell / Batch / 其他脚本语言范本（加载条件：`.sh` `.bash` `.rb` `.php` `.ps1` `.psm1` `.bat` `.cmd` `.pl` `.r` `.lua` 等）
 
 ## Shell
 
@@ -79,6 +79,42 @@ function ⟨myFunction⟩($⟨myArgument⟩) {}
 ### 抑制
 PHPStan 用注释抑制（如 `@phpstan-ignore-next-line`；具体写法以仓库现有用法与 phpstan 版本为准，不确定 → escalate）。
 
+## PowerShell
+
+### 注释式帮助（Get-Help 的正式文档源，承重）
+```powershell
+<#
+.SYNOPSIS ⟨One-line purpose.⟩
+.DESCRIPTION ⟨Longer description.⟩
+.PARAMETER ⟨Name⟩ ⟨What it means; one block per parameter.⟩
+.EXAMPLE
+    PS> ⟨Invoke-Thing -Path C:\x⟩
+    ⟨What this example demonstrates.⟩
+.NOTES ⟨Caveats, prerequisites.⟩
+.LINK ⟨about_... or URI⟩
+#>
+function ⟨Invoke-Thing⟩ { ... }
+```
+- `.KEYWORD` 必须行首、被帮助系统解析——删除或错位缩进 = 删文档。作用域是函数或脚本（注释块置于其开头或结尾）。
+- 行注释 `#`；块注释 `<# ... #>`。
+
+### #requires（承重）
+```powershell
+#requires -Version ⟨7.4⟩
+#requires -Modules ⟨Az.Accounts⟩
+#requires -RunAsAdministrator
+```
+运行前置条件指令，不是普通注释；删除会改变脚本的可运行性。
+
+## Batch（`.bat` / `.cmd`）
+
+```bat
+REM ⟨comment text⟩
+:: ⟨comment text⟩
+```
+- `::` 是"标签"变通、**不是注释**：出现在 `(...)` 块（for / if）内会导致解析错误 → 块内一律用 `REM`。
+- `::` 行会被解析为标签行；改写时不要把它当普通注释搬动。
+
 ## 其他语言速查
 
 | 语言 | 行注释 | 文档机制 |
@@ -95,4 +131,4 @@ PHPStan 用注释抑制（如 `@phpstan-ignore-next-line`；具体写法以仓�
 
 ## 来源
 
-shellcheck wiki（Directive，github.com/koalaman/shellcheck）；rubydoc.info YARD Tags.md；docs.phpdoc.org（What is a DocBlock）；rubocop 文档（Style/CommentAnnotation）；roxygen2、Haddock、perlpod 官方文档。
+shellcheck wiki（Directive，github.com/koalaman/shellcheck）；rubydoc.info YARD Tags.md；docs.phpdoc.org（What is a DocBlock）；rubocop 文档（Style/CommentAnnotation）；roxygen2、Haddock、perlpod 官方文档；Microsoft Learn about_Comment_Based_Help、about_Requires；SS64 / Microsoft docs（cmd 标签与 REM 语义）。

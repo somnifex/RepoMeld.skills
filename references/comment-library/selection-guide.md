@@ -38,6 +38,8 @@
 | workaround / 上游缺陷 | 行内注释-why（workaround 型，带链接） | 必须保留 issue/ticket 链接与解除条件 |
 | TODO/FIXME | 语言文件"任务标记"节 | 保留可执行项并规范化格式 |
 | 弃用 | 弃用模板（有属性用属性：`#[deprecated]`、`@Deprecated`、`@deprecated`） | 注释弃用仅在无属性机制时用 |
+| GraphQL/proto/OpenAPI/JSON Schema 的正式描述 | `schema-protocol.md` | `"""` 描述、前置注释、`$comment` 是 API 语义而非注释，只整块按文档标准改写 |
+| 构建与基础设施文件（CMake/Make/Terraform/Nginx/Apache/ignore 文件等） | `build-infra.md` | 注释常关联构建行为，先过承重候选审查，默认保守 |
 | 文件头 | 语言文件"文件头"节 | 许可证部分无条件保留 |
 | 抑制指令 | 语言文件"抑制指令清单" | 支持带 reason 的语言必须补 reason |
 

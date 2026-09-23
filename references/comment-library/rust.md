@@ -81,6 +81,9 @@ workaround 带上游 issue 链接与解除条件。
 | `#[allow(⟨lint⟩)]` / `#[allow(clippy::⟨lint⟩)]` | 语义属性；注释（`// allow(...)`）无抑制效果，见到注释式"抑制"应视为残留 |
 | `#[deprecated(note = "⟨...⟩")]` | 弃用用属性，不用注释；doc comment 里另配 `Deprecated:` 说明可以 |
 | `#[allow(missing_docs)]` | 关闭文档 lint |
+| `#[doc = "⟨...⟩"]` | doc comment 的属性形式（与 `///` 等价）；宏内部生成文档只能用它 |
+| `#[doc(hidden)]` | 从 rustdoc 输出隐藏该条目——**可见性口径，承重** |
+| `#[doc(alias = "⟨name⟩")]` | rustdoc 搜索别名 |
 | doc test 标注 ```` ```no_run ```` / ```` ```ignore ```` / ```` ```compile_fail ```` / ```` ```should_panic ```` | **语义**：改变 doc test 行为 |
 
 **doc test 承重**：`///` 中的代码块会被 `cargo test` 编译并运行——删除或改动 = 删测试、改测试。
