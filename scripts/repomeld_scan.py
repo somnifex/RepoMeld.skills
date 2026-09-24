@@ -57,6 +57,36 @@ TEMP_NAME_PATTERNS = [
 # Safety valve so pathological repositories cannot produce unbounded output.
 TRACE_CANDIDATE_LIMIT = 5000
 
+# Task-like marker leads. Candidates only: completion status is decided by
+# references/task-completion-policy.md (default: plan/artifact context, no code verification).
+TASK_MARKER_PATTERNS = [
+    ("stale_todo", re.compile(r"\b(?:TODO|FIXME|WIP|XXX|HACK)\b", re.I)),
+    ("stale_todo", re.compile(r"待办|未完成|待实现")),
+    ("stage_marker", re.compile(r"\bTask\s+\d+(?:\.\d+)*\b", re.I)),
+    ("stage_marker", re.compile(r"任务\s*\d+(?:\.\d+)*")),
+]
+
+
+def scan_task_markers(path: Path, root: Path, max_bytes: int) -> list[dict]:
+    out = []
+    try:
+        if path.stat().st_size > max_bytes:
+            return out
+        text = path.read_text(encoding="utf-8", errors="ignore")
+    except (OSError, UnicodeError):
+        return out
+    rel = str(path.relative_to(root))
+    for lineno, line in enumerate(text.splitlines(), 1):
+        for category, pattern in TASK_MARKER_PATTERNS:
+            if pattern.search(line):
+                out.append({
+                    "path": rel,
+                    "line_start": lineno,
+                    "category": category,
+                    "sample": line.strip()[:300],
+                })
+    return out
+
 
 def should_skip_dir(name: str, extra: set[str]) -> bool:
     return name in DEFAULT_SKIP or name in extra
@@ -113,6 +143,7 @@ def main() -> int:
     manifests = []
     temp_name_candidates = []
     trace_candidates = []
+    task_candidates = []
     file_count = 0
 
     for current, dirs, files in os.walk(root):
@@ -128,6 +159,8 @@ def main() -> int:
                 temp_name_candidates.append(rel)
             if is_text_candidate(path) and len(trace_candidates) < TRACE_CANDIDATE_LIMIT:
                 trace_candidates.extend(scan_file(path, root, args.max_file_bytes))
+            if is_text_candidate(path) and len(task_candidates) < TRACE_CANDIDATE_LIMIT:
+                task_candidates.extend(scan_task_markers(path, root, args.max_file_bytes))
 
     result = {
         "repository_root": str(root),
@@ -135,9 +168,10 @@ def main() -> int:
         "top_level_modules": infer_top_level_modules(root),
         "manifests": sorted(manifests),
         "temporary_name_candidates": sorted(set(temp_name_candidates)),
+        "task_candidates": task_candidates,
         "trace_candidates": trace_candidates,
         "trace_candidates_truncated": len(trace_candidates) >= TRACE_CANDIDATE_LIMIT,
-        "notice": "Candidates only. Pattern matching produces false positives (e.g. AWS S3, product names); RepoMeld semantic review is required before mutation or deletion."
+        "notice": "Candidates only. Pattern matching produces false positives (e.g. AWS S3, product names); RepoMeld semantic review is required before mutation or deletion. task_candidates are marker leads only; completion status is determined by references/task-completion-policy.md (default: plan/artifact context, no code verification)."
     }
     print(json.dumps(result, indent=2 if args.pretty else None, ensure_ascii=False))
     return 0

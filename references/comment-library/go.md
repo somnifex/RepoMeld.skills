@@ -54,7 +54,7 @@ package rc4
 // TODO(⟨uid⟩): ⟨body⟩
 // BUG(⟨uid⟩): ⟨body⟩
 ```
-`MARKER(uid):` 形式会被 pkg.go.dev 收集到专门区块。
+`MARKER(uid):` 形式会被 pkg.go.dev 收集到专门区块。官方未规定 TODO 格式，stdlib 实际混用 `// TODO(⟨uid⟩)` 与 `// TODO:` 两种形式；规范化沿用仓库既有形式，需挂追踪号时优先 `// TODO: ⟨issue⟩: ⟨what⟩`。
 
 ### G6 分节/链接（godoc 富文本）
 - 标题：单独一行 `# ⟨Title⟩`，前后空行。

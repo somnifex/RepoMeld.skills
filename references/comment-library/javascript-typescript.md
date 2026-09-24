@@ -112,7 +112,7 @@ var ⟨sb⟩;
 // TODO: ⟨bug/link⟩ - ⟨what⟩
 // FIXME: ⟨context⟩ - ⟨what⟩
 ```
-ESLint `no-warning-comments` 默认盯 `todo`/`fixme`/`xxx`（大小写不敏感、整词）。清理时保留可执行项、补上下文，格式与 Google 系一致。
+ESLint `no-warning-comments` 默认盯 `todo`/`fixme`/`xxx`（大小写不敏感、整词）。Google JS 指南未规定格式（仅在 8.2.2 提到"leave a TODO comment"是 last resort）；生态中 `// TODO(⟨owner⟩):`（AngularJS 时代沿袭）与裸 `// TODO:` 并存。规范化沿用仓库既有形式；缺省 ticket/链接优先，人名形式仅在仓库既有且无追踪号可挂时保留。
 
 ## 抑制指令清单（全部承重，禁止删除）
 

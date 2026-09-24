@@ -47,7 +47,7 @@ Before: // Modified by John 2023-05-01 to fix bug
 → 整块删除（git history 承载）。若 bug 编号是关键上下文 → 并入文档注释的 References/See 类槽位，不单独留日志注释。
 
 ### R6 陈旧/失控 TODO
-按 cleanup-policy 分类：仍可执行 → 保留并规范化到语言文件的任务标记模板（补 owner 或 ticket 链接）；已完成且代码证实 → 删除；属于历史理由 → 转成耐久注释；存疑 → escalate。规范化也是整块操作：同一个 TODO 主题的多行注释一次改完。
+先按 `references/task-completion-policy.md` 判定完成情况：未完成/无法判定的任务默认 `retain`——原样冻结、记入 `deferred_tasks`，不进入本配方；仅当运行的 `incomplete_task_policy` 授权处理时才规范化。已完成且代码证实 → 删除；属于历史理由 → 转成耐久注释；存疑 → escalate。规范化是整块操作：同一个 TODO 主题的多行注释一次改完。上下文按**对应语言范本的优先级**选择，不用全局规则：可追踪的 ticket/bug 链接优先（Java 官方强制 bug/issue 链接并明确反例 `@yourusername`；C++ 官方四档优先级把人名列末位）；owner 人名仅用于该语言范本明示可用的形式（如 Go stdlib 的 `TODO(uid)` 惯例），且仅在无追踪号可挂时。
 
 ### R7 中英混杂/多语言碎片描述同一件事
 → 选定一种语言（仓库惯例优先），把多个碎片**合并成一个**规范注释块，删除其余碎片。不允许留下翻译腔的混合块。

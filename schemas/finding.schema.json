@@ -17,7 +17,11 @@
     "rationale": {"type": "string"},
     "proposed_change": {"type": ["string", "null"]},
     "reference_evidence": {"type": "array", "items": {"type": "string"}},
-    "requires_review": {"type": "boolean", "default": false}
+    "requires_review": {"type": "boolean", "default": false},
+    "task_status": {"type": "string", "enum": ["complete", "incomplete", "unknown"], "description": "Required for task-like findings; unknown is handled as incomplete. See references/task-completion-policy.md."},
+    "completion_basis": {"type": "string", "enum": ["plan_artifact", "code_scan", "undetermined"]},
+    "task_context": {"type": "array", "items": {"type": "string"}, "description": "Context carriers of a task-like finding: locations holding its intent, remaining work, constraints, continuation point, and related artifacts."},
+    "context_preserved_at": {"type": ["string", "null"], "description": "Canonical location where a task's context was preserved when its original carrier was deleted or relocated."}
   },
   "additionalProperties": true
 }

@@ -17,6 +17,7 @@ RETURN:
 - languages present (used for selective loading of `references/comment-library/` — list every language with source files);
 - dependencies/ownership boundaries;
 - candidate residue patterns;
+- task inventory: task-like markers, task-numbered plan/status artifacts, one-off task scripts (completion is judged later from plan/artifact context by default);
 - validation commands;
 - uncertainties.
 

@@ -79,16 +79,15 @@ Preserve or relocate:
 - operational caveats;
 - intentional deviations from common patterns.
 
-## TODO/FIXME
+## TODO/FIXME and task-like findings
 
-Do not delete TODO/FIXME solely because they look stale.
+Task-like findings (TODO/FIXME/WIP markers, stage/task-numbered labels, task plans, one-off task scripts) follow `references/task-completion-policy.md`:
 
-Classify as:
-
-- still actionable -> preserve/normalize;
-- completed -> remove if implementation proves completion;
-- historical rationale -> convert to durable comment/doc if needed;
-- ambiguous -> escalate.
+- never delete a TODO/FIXME solely because it looks stale;
+- check completion first: `complete`, `incomplete`, or `unknown` — `unknown` is handled as `incomplete`;
+- under the default `retain` policy, incomplete/unknown tasks are `preserve` findings: frozen in place, never force-resolved, with their full context recorded and reported as unprocessed;
+- a completed task may be removed only when the evidence required for deletion (see the delete rules above) actually proves completion; otherwise keep or normalize it;
+- processing incomplete tasks at all requires the run's `incomplete_task_policy` to authorize it — resolving one without authorization escalates (see `references/risk-policy.md`).
 
 ## Convergence rule
 

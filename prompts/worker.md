@@ -16,6 +16,7 @@ READ:
 
 COMMENTS:
 - Perform comment scanning by reading code with file tools; do not rely on scripts.
+- Task-like findings (TODO/FIXME/WIP markers, stage/task-numbered labels, task plans) get a completion check per `references/task-completion-policy.md`: record `task_status` (complete / incomplete / unknown) and `completion_basis`. Under the default `retain` policy, freeze incomplete/unknown tasks in place with their full context recorded (`task_context`); never resolve, rewrite, or delete them.
 - AUDIT: read every in-scope, non-vendor, non-generated source file in the shard; do not sample. Record file-level coverage in the result (`coverage`: files_in_scope, files_audited, skipped with reasons).
 - New or rewritten comments must use a template from the matching library file (cite the template id in findings and plans); fill slots with facts observed in the code, never invented ones.
 - Classify missing-comment candidates as `add` findings only when a necessity trigger from `references/cleanup-policy.md` applies (public API without docs, non-obvious constraint, workaround, reason-less suppression, undocumented deprecation); cite the template id and the code facts for each slot.
@@ -33,6 +34,7 @@ DO NOT:
 - Produce findings or edits outside the chosen cleanup scope; report out-of-scope observations instead of acting on them.
 - Add comments that the frozen plan does not list.
 - Delete uncertain artifacts; escalate instead.
+- Process or resolve incomplete tasks unless the run's `incomplete_task_policy` authorizes it.
 - Modify files outside the assigned ownership.
 
 OUTPUT:

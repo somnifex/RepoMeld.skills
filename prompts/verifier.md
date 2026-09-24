@@ -16,7 +16,8 @@ Determine whether the cleanup respected the recorded scope, preserved observable
 
 Scope checks:
 - the final diff touches nothing outside the recorded cleanup scope;
-- audit coverage holds: every in-scope file was audited or explicitly reported as skipped.
+- audit coverage holds: every in-scope file was audited or explicitly reported as skipped;
+- task preservation: every deferred task in the plan is untouched in the final diff (no resolution, rewrite, deletion, or context-carrier removal) and appears in the report with its preserved context.
 
 For comment rewrites and additions specifically, verify from the diff that:
 - each rewritten comment block was replaced as a whole unit (no mixed half-old half-new residue inside one block);

@@ -32,7 +32,8 @@ It is not an "AI comment deleter" and not a license for unrelated refactoring �
 - Internal subskills load progressively to keep the main context small.
 - `references/comment-library/` comment template library: per-language canonical comment exemplars sourced from authoritative guides (PEP 8/257, Google Style, official Go/Rust docs, etc.). Auditors **selectively load** only the files matching the languages detected by the scan (never the whole directory); comment rewrites and additions must fill a selected template and produce the entire logical comment unit in one pass — no word-by-word minimal patches; load-bearing comments (license headers, generated-file markers, build directives, suppression directives, doctests, etc.) are never touched.
 - Comment addition (`add`) is a first-class action: when a public API lacks docs, a non-obvious constraint is unexplained, a workaround has no link, a suppression directive lacks a reason, or a public deprecation has no marker, RepoMeld writes the necessary comment from a template. No quantity caps — instead every added comment must pass a fact-pinning review (the verifier traces each claim back to the code).
-- A single upfront gate: the only interaction point, in INIT after the baseline is captured, resolves the cleanup scope (full repository / uncommitted changes / recent commits / explicit paths / audit-only) and L3 authorization in one batched ask; the rest of the run is unattended. In non-interactive runtimes it defaults to uncommitted changes only and records the gap.
+- Incomplete tasks are retained by default: scanning checks the completion status of task-like findings (TODO/FIXME, stage/task-numbered labels, task plans) as complete / incomplete / unknown (unknown counts as incomplete). Incomplete or undeterminable tasks **stay unfinished** with their full context preserved (intent and definition of done, remaining work, constraints, continuation point, related artifacts) and are explicitly recorded as unprocessed in the plan (`deferred_tasks`) and the report — intentionally retained, not missed. By default no code is scanned to verify completion and no incomplete task is processed; both happen only when the invocation explicitly asks, with no extra confirmation needed.
+- A single upfront gate: the only interaction point, in INIT after the baseline is captured, resolves the cleanup scope (full repository / uncommitted changes / recent commits / explicit paths / audit-only) and L3 authorization in one batched ask; the rest of the run is unattended. In non-interactive runtimes it defaults to uncommitted changes only and records the gap. The incomplete-task policy never joins the gate: it defaults to retain (tasks stay unfinished, context preserved, marked unprocessed) and switches only when the invocation explicitly asks for code-based completion verification or for processing incomplete tasks.
 - Verifiable completeness: every in-scope, non-vendor, non-generated source file is read (no sampling); workers report file-level coverage, aggregated in the barrier snapshot and the final report.
 - `scripts/repomeld_scan.py` provides an optional read-only, deterministic repository inventory; comment analysis itself is done by the model reading code, not by scripts.
 
@@ -133,6 +134,16 @@ Use RepoMeld to enhance the comments in this repository: remove process residue 
 
 When the scope is not specified, RepoMeld asks once at startup (full repository / uncommitted changes only / last N commits / explicit paths / audit-only) plus L3 authorization, then runs unattended to the report.
 
+Incomplete tasks are retained by default: TODO/FIXME, stage/task-numbered labels, and task plans get a completion check, and anything incomplete or undeterminable is left untouched with its context preserved and recorded as unprocessed — no extra confirmation needed. To change the default, say so explicitly in the invocation:
+
+```text
+Use RepoMeld to clean the current repository and check TODO completion by scanning the code; only process the ones proven complete, and list the rest in the report.
+```
+
+```text
+Use RepoMeld to clean the current repository and also normalize the unfinished TODOs against the templates.
+```
+
 Practical tips:
 
 - Run on a clean worktree (or a dedicated branch) so the final diff is easy to review;
@@ -176,6 +187,7 @@ repomeld/
 │   ├── knowledge-preservation.md
 │   ├── partitioning-policy.md
 │   ├── risk-policy.md
+│   ├── task-completion-policy.md # Task completion checks and incomplete-task retention
 │   ├── verification-policy.md
 │   ├── worked-example.md        # Minimal end-to-end example (contract shapes)
 │   └── subskills/               # Sub-workflows for INIT → REPORT

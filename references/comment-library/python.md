@@ -174,8 +174,8 @@ x = x + 1                 # Compensate for border
 
 ## 任务标记
 
-- 跨语言统一用 Google 风格：`# TODO: ⟨bug ID or link⟩ - ⟨what to do⟩`。
-- 上下文优先给可追踪对象（bug/链接），避免只写人名（Google Java Style 明确反对 @username 型上下文）。
+- PEP 8 不规定 TODO 格式；缺省沿用 Google 系：`# TODO: ⟨bug ID or link⟩ - ⟨what to do⟩`。
+- 上下文优先给可追踪对象（bug/链接，可追踪、有后续讨论）；无追踪号可挂时 `# TODO(⟨owner⟩): ⟨what⟩` 也可接受（Python 无官方规定，主流两种并存）。人名只写人名、不带可追踪对象的形式避免（Google Java Style 明确反例 `@yourusername`，供跨语言参考）。
 - 多行 TODO 保持块注释格式（每行 `# `）。
 
 ## 抑制与魔法注释清单（全部承重，禁止删除）

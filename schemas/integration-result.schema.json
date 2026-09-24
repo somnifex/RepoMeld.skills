@@ -12,6 +12,7 @@
     "ownership_conflicts": {"type": "array", "items": {"type": "string"}},
     "cross_scope_references": {"type": "array", "items": {"type": "string"}},
     "skipped_scope_findings": {"type": "array", "items": {"type": "string"}, "description": "Ids of worker findings located outside the chosen cleanup scope; recorded for the report, never planned or applied."},
+    "deferred_task_ids": {"type": "array", "items": {"type": "string"}, "description": "Ids of task-like findings routed to the plan's deferred_tasks under the retain policy."},
     "summary": {"type": "string"}
   },
   "additionalProperties": true

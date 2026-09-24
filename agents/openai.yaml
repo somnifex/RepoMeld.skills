@@ -8,7 +8,9 @@ interface:
     selectively by scan results; and, inside a user-chosen scope, add missing necessary
     comments (public API documentation, non-obvious constraints, workarounds, suppression
     reasons, deprecation markers) from the same templates. Preserve durable engineering
-    knowledge and observable behavior. Use when the user asks to clean, consolidate,
+    knowledge and observable behavior. Incomplete tasks are retained unfinished with
+    their context preserved and reported as unprocessed by default; verifying or processing
+    them requires an explicit user request. Use when the user asks to clean, consolidate,
     normalize, organize, enhance, or remove AI/SDD development traces or messy comments
     from a repository, or to complete, enhance, or add necessary code comments. Do
     not use as a justification for unrelated refactoring, feature work, API changes,

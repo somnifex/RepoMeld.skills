@@ -16,7 +16,9 @@ CHECK:
 - terminology inconsistency;
 - duplicated or lost engineering rationale;
 - behavior-sensitive edits;
-- unresolved cross-shard dependencies.
+- unresolved cross-shard dependencies;
+- one task-like finding reported by several shards: converge into a single record;
+- deferred tasks complete and context-carrying; no deferred task silently promoted to an action.
 
 Do not silently broaden scope.
 

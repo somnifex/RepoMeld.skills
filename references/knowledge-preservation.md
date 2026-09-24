@@ -2,6 +2,10 @@
 
 RepoMeld removes execution context, not engineering knowledge.
 
+## Unfinished work
+
+The context of an incomplete task is durable engineering knowledge until the task itself is resolved: its intent and definition of done, remaining work, constraints, continuation point, and related artifacts. Cleanup must never delete or gut the only place that context lives; when a carrier artifact must be removed, the task context moves to a canonical location first and the move is recorded. See `references/task-completion-policy.md`.
+
 ## Conversion rule
 
 Convert:

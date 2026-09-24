@@ -9,6 +9,8 @@ Within the assigned shard:
 - rewrite mixed process/rationale comments into durable rationale;
 - add necessary comments exactly where the plan contains `add` actions: write the complete new comment unit from the cited comment-library template, slots filled only with facts observable in the code; do not add anything the plan does not list;
 - delete L2 artifacts only after reference checks;
+- never process a deferred task: no delete, rewrite, completion label, or resolution of an incomplete/unknown task;
+- before deleting or relocating any artifact, confirm it is not the sole carrier of a deferred task's context; if it is, preserve that context at a canonical location first and record `context_preserved_at`;
 - update links/references caused by approved moves/deletions;
 - preserve pre-existing unrelated changes.
 

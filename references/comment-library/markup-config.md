@@ -13,7 +13,7 @@
 - CSS 只有 `/* */`（不可嵌套）；SCSS/Less 的 `//` 不进产物，`/* */` 进产物。
 - **`/*! ... */` important 注释：minifier 压缩时会被保留——惯例用于许可证头 → 绝对禁删。**
 ```css
-/*! ⟨library name ⟨version⟩ | ⟨license⟩ | ⟨homepage⟩ */
+/*! ⟨library name⟩ ⟨version⟩ | ⟨license⟩ | ⟨homepage⟩ */
 ```
 - 段落组织（Section banner，如 `/* ===== Buttons ===== */`）：统一、简化属低风险 L1；位置标记无信息量时可删。
 - KSS 文档注释（`// ⟨Component⟩` + `// Styleguide ⟨1.1⟩`）：有 KSS 构建的仓库属承重 → 保留。
@@ -23,7 +23,7 @@
 - `-- ⟨...⟩`（MySQL 要求第二个 `-` 后至少一个空白/控制字符）；`/* ⟨...⟩ */` 多行。
 - **MySQL 可执行注释（承重）**：
   - `/*! ⟨MySQL-specific code⟩ */`：MySQL 会**解析执行**内容；
-  - 版本化：`/*!50110 ⟨...⟩ */`——服务器版本 ≥ 5.01.10 才执行（格式：主版本两位 + 次两位 + release 两位）；
+  - 版本化：`/*!50110 ⟨...⟩ */`——服务器版本 ≥ 5.01.10 才执行（官方格式 Mmmrr：主版本 M + 次版本两位 + release 两位，如 `50110` = 5.01.10、`80031` = 8.0.31）；
   - 优化器 hint：`/*+ ⟨hint⟩ */`，**hint 会存储在对象定义里**。
   - mysqldump 产物中的这些注释删除 = 语义/兼容性丢失 → 生成产物不动。
 - **`COMMENT ON` 语句（PostgreSQL/Oracle，承重）**：
@@ -63,4 +63,4 @@ COMMENT ON COLUMN ⟨t⟩.⟨c⟩ IS '⟨Unit, sentinel values, constraints.⟩'
 
 ## 来源
 
-MySQL 8.0 Reference Manual §Comments（dev.mysql.com/doc/refman/8.0/en/comments.html）；spdx.dev/learn/handling-license-info；MDN HTML/CSS 注释；sqs/redirects 与 minifier 惯例（`/*!`）；Dockerfile reference（parser directives）。
+MySQL 8.0 Reference Manual §Comments（dev.mysql.com/doc/refman/8.0/en/comments.html）；spdx.dev/learn/handling-license-info；MDN HTML/CSS 注释；clean-css README（specialComments，`/*!` special comment 默认全保留）；Dockerfile reference（parser directives）。

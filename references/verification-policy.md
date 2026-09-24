@@ -26,7 +26,8 @@ Review the diff for:
 - changed schema/migrations;
 - changed dependency manifests/locks;
 - removed files still referenced anywhere;
-- loss of non-obvious rationale.
+- loss of non-obvious rationale;
+- deferred incomplete tasks and their context carriers left untouched.
 
 ## Baseline protection
 

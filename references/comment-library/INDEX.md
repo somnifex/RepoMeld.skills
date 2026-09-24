@@ -46,6 +46,6 @@ RepoMeld 的注释范本库。注释审计、改写与补写时提供权威、�
 
 ## 审计与改写时的角色分工
 
-- **AUDIT worker**：读 shard → 检测语言集合 → 按上表加载（通常 2–3 个文件）→ 用 `selection-guide.md` 决策树 A 给每条候选注释分类（preserve / rewrite / remove / escalate），用决策树 B 判定候选补写（add）。rewrite/add finding 必须注明将套用的模板编号（如 `python.md#P2`）。
+- **AUDIT worker**：读 shard → 检测语言集合 → 按上表加载（通常 1–3 个文件，与铁律 1 一致）→ 用 `selection-guide.md` 决策树 A 给每条候选注释分类（preserve / rewrite / remove / escalate），用决策树 B 判定候选补写（add）。rewrite/add finding 必须注明将套用的模板编号（如 `python.md#P2`）。
 - **APPLY worker**：按冻结计划执行整块改写与整块新增；改写前后都直接用文件读写工具重读文件，不依赖脚本。
 - **注释扫描由大模型阅读完成**。`scripts/repomeld_scan.py` 仍只是可选的确定性辅助，其注释相关输出仅是候选线索，从不构成决策依据。

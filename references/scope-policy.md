@@ -19,6 +19,16 @@ After the VCS baseline is captured, ask the user once, in a single batched inter
 
 L4/L5 remain forbidden regardless of the answers. Worker counts, comment templates, comment language, and risk classification are never asked; they are policy-derived (see `partitioning-policy.md` and `references/comment-library/`).
 
+### Incomplete-task policy (derived, never asked)
+
+The incomplete-task policy is not part of the gate and is never asked mid-run. It is derived once at INIT from the invocation and recorded in the cleanup plan (see `references/task-completion-policy.md`):
+
+- default `retain`: incomplete/unknown tasks (TODO/FIXME/WIP, stage/task-numbered labels, task plans) stay unfinished with their context fully preserved, and are recorded as unprocessed;
+- `verify_by_code`: only when the invocation explicitly asks to check completion against the implementation;
+- `process`: only when the invocation explicitly asks to handle incomplete tasks; dispositions still follow the normal risk gates.
+
+Non-interactive runtimes use `retain`. Nothing about tasks is ever asked mid-run.
+
 ### When not to ask
 
 - If the invocation already pins the scope ("only clean apps/api", "only my uncommitted changes"), do not ask; restate the derived scope in the plan and report instead.

@@ -1,4 +1,4 @@
-# Rust 范本（加载条件：`.rs`）
+# Rust 范本（加载条件：`.rs`；模板编号 RS1–RS5，与其他文件的 R 编号空间互不冲突）
 
 ## 语法
 
@@ -8,7 +8,7 @@
 
 ## 文档注释范本（rustdoc book + Rust API Guidelines）
 
-### R1 crate / 模块级
+### RS1 crate / 模块级
 ```rust
 //! ⟨Fast and easy queue abstraction.⟩
 //!
@@ -17,7 +17,7 @@
 //! [`⟨Easy⟩`]: ⟨http://thatwaseasy.example.com⟩
 ```
 
-### R2 条目结构（官方推荐顺序）
+### RS2 条目结构（官方推荐顺序）
 ```rust
 /// ⟨Short sentence explaining what it is, ending with a period.⟩
 ///
@@ -36,7 +36,7 @@
 - 示例用 `?` 而非 `unwrap`/`try!`（示例常被用户原样拷贝，API Guidelines C-QUESTION-MARK）。
 - `#` 开头的行会参与 `cargo test` 编译但不在 rustdoc 显示（可作示例脚手架）。
 
-### R3 # Errors / # Panics / # Safety（API Guidelines C-FAILURE）
+### RS3 # Errors / # Panics / # Safety（API Guidelines C-FAILURE）
 ```rust
 /// # Errors
 ///
@@ -56,14 +56,14 @@
 
 ## 行内注释范本
 
-### R4 SAFETY 注释（unsafe 块；std 惯例，clippy `undocumented_unsafe_blocks` 检查）
+### RS4 SAFETY 注释（unsafe 块；std 惯例，clippy `undocumented_unsafe_blocks` 检查）
 ```rust
 // SAFETY: ⟨why this unsafe block is sound⟩
 unsafe { ... }
 ```
 **承重**：删除会触发 clippy 告警并丢失健全性论证。
 
-### R5 why / 约束 / workaround
+### RS5 why / 约束 / workaround
 ```rust
 // ⟨sentence⟩
 ⟨code⟩

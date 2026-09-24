@@ -41,3 +41,7 @@ Default: forbidden for RepoMeld.
 ## Uncertainty rule
 
 If risk classification is uncertain, choose the higher risk level.
+
+## Incomplete tasks
+
+Resolving an incomplete task — deleting it, marking it complete, rewriting it away, or removing the sole carrier of its context — without the user's explicit authorization is treated like an L3 change: escalate, never auto-apply. With authorization recorded as the run's `incomplete_task_policy`, processing follows the normal risk levels above (see `references/task-completion-policy.md`).

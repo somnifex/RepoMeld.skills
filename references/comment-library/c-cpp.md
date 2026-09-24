@@ -68,7 +68,7 @@ int num_total_entries_;
 // TODO(⟨bug 12345678⟩): ⟨what⟩
 // TODO(⟨John⟩): ⟨what⟩
 ```
-带具体日期/事件的 TODO：写明确日期（"Fix by November 2005"）或明确事件（"Remove this code when all clients can handle XML responses."）。
+带具体日期/事件的 TODO：写明确日期（"Fix by November 2005"）或明确事件（"Remove this code when all clients can handle XML responses."）。官方推荐优先级即上列顺序：bug ID → 设计文档链接 → 括号 bug → 括号人名（末位；人名形式是官方范例但仅在无追踪上下文可挂时使用）。
 
 ## 行内注释（why）
 

@@ -1,6 +1,6 @@
 ---
 name: repomeld
-description: Self-orchestrating repository hygiene for software projects developed with SDD, coding agents, or vibe coding. Audit and consolidate AI-development traces such as S1/S2/M1/M2 stage markers, verbose process comments, temporary plans/reports/scratch files, stale TODOs, duplicated rationale, and abandoned agent artifacts; normalize comments against per-language template exemplars loaded selectively by scan results; and, inside a user-chosen scope, add missing necessary comments (public API documentation, non-obvious constraints, workarounds, suppression reasons, deprecation markers) from the same templates. Preserve durable engineering knowledge and observable behavior. Use when the user asks to clean, consolidate, normalize, organize, enhance, or remove AI/SDD development traces or messy comments from a repository, or to complete, enhance, or add necessary code comments. Do not use as a justification for unrelated refactoring, feature work, API changes, schema changes, dependency upgrades, or behavior changes.
+description: Self-orchestrating repository hygiene for software projects developed with SDD, coding agents, or vibe coding. Audit and consolidate AI-development traces such as S1/S2/M1/M2 stage markers, verbose process comments, temporary plans/reports/scratch files, stale TODOs, duplicated rationale, and abandoned agent artifacts; normalize comments against per-language template exemplars loaded selectively by scan results; and, inside a user-chosen scope, add missing necessary comments (public API documentation, non-obvious constraints, workarounds, suppression reasons, deprecation markers) from the same templates. Preserve durable engineering knowledge and observable behavior. Incomplete tasks are retained unfinished with their context preserved and reported as unprocessed by default; verifying or processing them happens only when explicitly requested. Use when the user asks to clean, consolidate, normalize, organize, enhance, or remove AI/SDD development traces or messy comments from a repository, or to complete, enhance, or add necessary code comments. Do not use as a justification for unrelated refactoring, feature work, API changes, schema changes, dependency upgrades, or behavior changes.
 ---
 
 # RepoMeld
@@ -24,6 +24,7 @@ RepoMeld is runtime-agnostic. It describes logical orchestration, not vendor-spe
 11. Use the host's highest useful parallelism, not its maximum possible parallelism.
 12. Do not fail merely because subagents are unavailable; degrade to sequential execution while preserving the same workflow semantics.
 13. Collect every user decision once, in the INIT upfront gate. After the gate closes, run unattended: no mid-run questions; undetermined items become escalations resolved through the resume protocol.
+14. Incomplete tasks stay incomplete by default: never force-resolve, delete, or strip context from an unfinished work item. Its context is fully preserved and it is reported as unprocessed unless the user explicitly asks to verify or process it.
 
 ## Runtime capability discovery
 
@@ -91,6 +92,16 @@ Any ambiguous deletion, behavior-sensitive change, ownership conflict, unexplain
 
 After the baseline is captured, resolve every user decision in one batched interaction following `references/scope-policy.md`: the cleanup scope, L3 pre-authorization, and the execution mode. Ask only what the invocation has not already determined; if the invocation pins everything, do not ask at all. In a non-interactive runtime, default to uncommitted changes only and record "scope not user-confirmed" as a verification gap.
 
+### Incomplete-task policy (derived, never asked)
+
+`incomplete_task_policy` is derived once at INIT and recorded in the cleanup plan; it is never part of the gate and never asked mid-run (`references/task-completion-policy.md`):
+
+- default `retain`: incomplete/unknown tasks stay unfinished with their full context preserved and are reported as unprocessed;
+- `verify_by_code`: only when the invocation explicitly asks to check completion by scanning code;
+- `process`: only when the invocation explicitly asks to handle incomplete tasks.
+
+Non-interactive runtimes use `retain`.
+
 Once the gate closes, the run proceeds unattended through REPORT. No phase may ask the user anything; undetermined items become escalations handled by the Escalation resume protocol. The chosen scope is frozen: DISCOVER maps it, PARTITION shards it, AUDIT and APPLY stay inside it, VERIFY confirms nothing leaked outside it.
 
 ## DISCOVER
@@ -105,6 +116,7 @@ Produce a compact repository map containing:
 - likely ownership/dependency boundaries;
 - repository-native validation commands;
 - candidate AI/SDD residue;
+- task inventory: task-like markers, task-numbered plan/status artifacts, and one-off task scripts;
 - ignored/generated paths;
 - pre-existing modified files to protect.
 
@@ -139,13 +151,15 @@ Combine small related shards. Split exceptionally large shards recursively. Avoi
 
 ## AUDIT_FANOUT
 
-Load `references/subskills/03-audit.md`, `references/cleanup-policy.md`, `references/knowledge-preservation.md`, and `references/risk-policy.md`.
+Load `references/subskills/03-audit.md`, `references/cleanup-policy.md`, `references/knowledge-preservation.md`, `references/risk-policy.md`, and `references/task-completion-policy.md`.
 
 Audit is strictly read-only.
 
 When a shard contains comments or docs, each audit worker additionally loads `references/comment-library/INDEX.md`, then loads only the library files matching the languages actually detected inside its own shard (normally one to three files, per the INDEX loading table). Never load the whole comment-library directory. Template selection follows `references/comment-library/selection-guide.md`; rewrite and add candidates must name the template they would apply.
 
 Comment scanning is performed by reading code with model file tools, not by scripts. `scripts/repomeld_scan.py` remains an optional aid; its comment-related output is candidate leads only, never decision authority, and RepoMeld stays fully functional without it.
+
+Task-like findings (TODO/FIXME/WIP markers, stage/task-numbered labels, task plans) also receive a completion check per `references/task-completion-policy.md`: classify `task_status` (complete / incomplete / unknown — unknown is handled as incomplete) with `completion_basis`. Under the default `retain` policy, incomplete/unknown tasks are frozen in place and recorded with their full context (intent and remaining work, constraints, continuation point, related artifacts); they become `preserve` findings routed to the plan's `deferred_tasks`, never to `actions`. Only an invocation-authorized `verify_by_code` or `process` policy changes the determination basis or the disposition.
 
 Audit completeness is file-level: every in-scope, non-vendor, non-generated source file must be read, never sampled. Each worker reports `coverage` (files in scope, files audited, skipped with reasons) in its result; the barrier snapshot aggregates it.
 
@@ -175,6 +189,7 @@ Integrators:
 - normalize terminology;
 - distinguish process residue from durable engineering knowledge;
 - identify canonical locations for retained knowledge;
+- deduplicate task-like findings and converge one task reported by several shards into a single record, then route deferred tasks to the plan's `deferred_tasks` with complete context carriers;
 - surface ownership conflicts and high-risk changes;
 - return compact structured summaries.
 
@@ -199,6 +214,8 @@ Comment rewrites are planned as whole-comment-unit transformations, never minima
 
 Add actions (missing necessary comments) are planned the same way: each names the selected template, the complete text of the new comment unit, and the code facts each slot was filled from. Only necessity triggers from `references/cleanup-policy.md` justify an add.
 
+The plan also records the derived `incomplete_task_policy` and a `deferred_tasks` inventory: every incomplete/unknown task found in scope with its completion basis, context carriers, and the reason it was not processed. Deferred tasks are never planned as actions — they are the record that each was found and intentionally left unfinished, not missed.
+
 For a minimal concrete example of worker results, plan actions, and verification results, see `references/worked-example.md`.
 
 ## AUDIT_BARRIER
@@ -207,7 +224,7 @@ Do not begin mutation until all required audit groups are complete or explicitly
 
 Freeze the cleanup plan for the apply epoch. New low-risk observations may be recorded, but do not silently expand scope into risky or cross-owned changes.
 
-Record a structured coverage snapshot at this barrier: shards audited, shards explicitly excluded with reasons, file-level audit coverage per shard, and findings deferred as escalations.
+Record a structured coverage snapshot at this barrier: shards audited, shards explicitly excluded with reasons, file-level audit coverage per shard, findings deferred as escalations, and the task inventory summary (task-like findings by `task_status`, with the policy in force).
 
 ## APPLY_FANOUT
 
@@ -226,6 +243,8 @@ Default permissions by risk (summary only; `references/risk-policy.md` is the au
 
 Workers must not perform unrelated refactors, style cleanup, dependency upgrades, or opportunistic code improvements.
 
+Deferred tasks are frozen: never delete, rewrite, resolve, or relabel an incomplete/unknown task, and never remove or gut the sole context carrier of one. Before deleting or relocating any artifact, confirm it does not carry a deferred task's context; if it does, preserve that context at a canonical location first and record it.
+
 After each shard, run the cheapest relevant local validation.
 
 ## APPLY_REDUCE
@@ -239,6 +258,7 @@ Check:
 - duplicated rationale;
 - accidental cross-scope edits;
 - protected baseline changes;
+- deferred tasks and their context carriers untouched;
 - suspicious runtime-line edits;
 - ownership violations.
 
@@ -269,7 +289,9 @@ Verify as applicable:
 - deleted-file reference scan;
 - API/schema/config/dependency diffs;
 - suspicious runtime-line changes;
-- unintentional edits to pre-existing modified files.
+- unintentional edits to pre-existing modified files;
+- deferred incomplete tasks: none was resolved, rewritten, or deleted, and no context carrier was removed or gutted (checked against the plan's `deferred_tasks`);
+- every deferred task appears in the report with its preserved context.
 
 Passing tests alone is not proof of semantic equivalence.
 
@@ -286,6 +308,7 @@ Report:
 - stage markers and agent narration removed;
 - comments/docs normalized and necessary comments added;
 - process knowledge converted into durable engineering knowledge;
+- task inventory summary, the incomplete-task policy in force, and every deferred (unprocessed) task with its preserved context location;
 - validation performed and outcomes;
 - unresolved/escalated items;
 - whether behavior/API/schema/config/dependency changes were observed;
@@ -315,5 +338,6 @@ RepoMeld is complete only when:
 - the final diff touches nothing outside the frozen cleanup scope;
 - deleted artifacts have no unresolved references;
 - retained rationale has a durable canonical location;
+- every incomplete task in scope was retained unfinished with its context preserved and recorded as deferred, unless the user authorized processing;
 - repository-level verification was attempted to the extent supported by the project/runtime;
 - final reporting accurately distinguishes verified facts from unverified assumptions.

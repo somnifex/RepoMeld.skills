@@ -19,6 +19,7 @@ REQUIRED = [
     "references/knowledge-preservation.md",
     "references/partitioning-policy.md",
     "references/risk-policy.md",
+    "references/task-completion-policy.md",
     "references/verification-policy.md",
     "references/worked-example.md",
     "prompts/explorer.md",

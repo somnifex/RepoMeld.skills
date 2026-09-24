@@ -12,6 +12,7 @@
     "config_change": {"type": "string", "enum": ["none_observed", "observed", "unknown"]},
     "dependency_change": {"type": "string", "enum": ["none_observed", "observed", "unknown"]},
     "protected_paths": {"type": "string", "enum": ["untouched", "unexpected_modifications", "unknown"], "description": "Outcome of checking pre-existing/protected paths against the plan's protected_paths."},
+    "task_preservation": {"type": "string", "enum": ["preserved", "violated", "unknown"], "description": "Outcome of checking the plan's deferred_tasks and their context carriers against the final diff."},
     "checks": {"type": "array", "items": {"type": "object"}},
     "suspicious_changes": {"type": "array", "items": {"type": "string"}},
     "gaps": {"type": "array", "items": {"type": "string"}}

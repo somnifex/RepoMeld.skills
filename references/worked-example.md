@@ -17,6 +17,8 @@ scope: full repository (user-confirmed via upfront gate)
 l3_preauthorized: no (L3 escalates at end, resolved via resume protocol)
 ```
 
+The incomplete-task policy is derived, not asked: the invocation says nothing about unfinished tasks, so `incomplete_task_policy: retain` is recorded.
+
 ## Repository map excerpt (DISCOVER)
 
 ```text
@@ -89,6 +91,26 @@ Root Coordinator
       "proposed_change": "/** Refreshes the stored access token using {@link code}. Rejects with AuthError when the refresh endpoint returns 401. */",
       "reference_evidence": [],
       "requires_review": false
+    },
+    {
+      "id": "F-004",
+      "scope": "packages/auth + packages/ui",
+      "path": "packages/auth/src/session.ts",
+      "line_start": 130,
+      "category": "stale_todo",
+      "action": "preserve",
+      "risk": "L1",
+      "confidence": 0.7,
+      "rationale": "TODO still describes pending refresh-rotation work; no plan artifact proves completion, so task_status=incomplete. Frozen in place under the retain policy; routed to deferred_tasks.",
+      "task_status": "incomplete",
+      "completion_basis": "plan_artifact",
+      "task_context": [
+        "packages/auth/src/session.ts:130 (intent and remaining work)",
+        "packages/auth/docs/rotation-plan.md (owning M3 plan; continuation point for the rotation work)"
+      ],
+      "proposed_change": null,
+      "reference_evidence": [],
+      "requires_review": false
     }
   ],
   "changed_paths": [],
@@ -99,6 +121,7 @@ Root Coordinator
     "files_audited": 37,
     "skipped": []
   },
+  "task_summary": {"total": 1, "complete": 0, "incomplete": 1, "unknown": 0},
   "notes": []
 }
 ```
@@ -112,6 +135,23 @@ Root Coordinator
   "scope": {"mode": "full_repository", "user_confirmed": true},
   "protected_paths": [],
   "execution_mode": "PARALLEL_NATIVE",
+  "incomplete_task_policy": "retain",
+  "deferred_tasks": [
+    {
+      "id": "D-001",
+      "path": "packages/auth/src/session.ts",
+      "line_start": 130,
+      "marker": "TODO",
+      "task_status": "incomplete",
+      "completion_basis": "plan_artifact",
+      "context_refs": [
+        "packages/auth/src/session.ts:130 (intent and remaining work)",
+        "packages/auth/docs/rotation-plan.md (owning plan; continuation point)"
+      ],
+      "context_preserved_at": null,
+      "reason_not_processed": "Default retain policy: incomplete task left unfinished with context preserved, reported as unprocessed."
+    }
+  ],
   "shards": [
     {"id": "apps-web", "owned_paths": ["apps/web/**"]},
     {"id": "apps-api", "owned_paths": ["apps/api/**"]},
@@ -171,12 +211,14 @@ Root Coordinator
   "schema_change": "none_observed",
   "config_change": "none_observed",
   "dependency_change": "none_observed",
-  "protected_paths": "untouched",
-  "checks": [
-    {"command": "git diff --stat <baseline>", "status": "pass"},
-    {"command": "git diff --name-only <baseline> (all paths inside recorded scope)", "status": "pass"},
-    {"command": "pnpm -r test", "status": "pass"}
-  ],
+    "protected_paths": "untouched",
+    "task_preservation": "preserved",
+    "checks": [
+      {"command": "git diff --stat <baseline>", "status": "pass"},
+      {"command": "git diff --name-only <baseline> (all paths inside recorded scope)", "status": "pass"},
+      {"command": "pnpm -r test", "status": "pass"},
+      {"command": "deferred task D-001 present in final diff as unchanged; context carriers intact", "status": "pass"}
+    ],
   "suspicious_changes": [],
   "gaps": []
 }
@@ -189,6 +231,7 @@ mode: PARALLEL_NATIVE (3 workers, 1 fresh verifier)
 scope: full repository (user-confirmed); 3/3 shards audited at full file coverage
 changed: 1 comment rewritten, 1 necessary comment added, 1 file deleted, 0 moved
 knowledge: vendor serialization constraint retained at original site
+tasks: 1 task-like finding — 1 incomplete (deferred, policy: retain); context preserved at the original TODO and its owning plan
 escalated: 1 (L3 dead helper, awaiting user decision)
 impact: no API/schema/config/dependency changes observed; behavior unchanged per diff review + tests
 gaps: none

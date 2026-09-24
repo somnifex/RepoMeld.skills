@@ -24,4 +24,7 @@ Return:
 - protected pre-existing modified paths;
 - scope-gate inputs (uncommitted summary, recent-commit file set);
 - candidate residue locations;
+- task inventory: task-like markers, task-numbered plan/status artifacts, and one-off task scripts, each noted with whether completion is determinable from its own plan/artifact context;
 - uncertainty notes.
+
+The task inventory feeds the completion check in `references/task-completion-policy.md`. Default runs judge completion from plan/artifact context only — do not scan implementations to verify completion unless the user explicitly asked for it.
